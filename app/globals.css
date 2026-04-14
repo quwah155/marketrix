@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   LIGHT MODE TOKENS
+───────────────────────────────────────────── */
+:root {
+  --background: 220 20% 97%;
+  --foreground: 222 47% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 8%;
+  --primary: 226 100% 59%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 215 25% 93%;
+  --secondary-foreground: 222 47% 15%;
+  --muted: 215 20% 92%;
+  --muted-foreground: 215 20% 45%;
+  --accent: 215 20% 92%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 215 20% 86%;
+  --input: 215 20% 86%;
+  --ring: 226 100% 59%;
+  --radius: 0.75rem;
+
+  /* Input-specific */
+  --input-bg: 0 0% 100%;
+  --input-text: 222 47% 8%;
+  --input-placeholder: 215 20% 55%;
+  --input-border: 215 20% 82%;
+  --input-border-focus: 226 100% 59%;
+}
+
+/* ─────────────────────────────────────────────
+   DARK MODE TOKENS
+───────────────────────────────────────────── */
+.dark {
+  --background: 224 30% 7%;
+  --foreground: 215 30% 94%;
+  --card: 224 28% 10%;
+  --card-foreground: 215 30% 94%;
+  --popover: 224 28% 12%;
+  --popover-foreground: 215 30% 94%;
+  --primary: 226 100% 65%;
+  --primary-foreground: 224 30% 7%;
+  --secondary: 224 20% 16%;
+  --secondary-foreground: 215 30% 85%;
+  --muted: 224 20% 14%;
+  --muted-foreground: 215 20% 58%;
+  --accent: 224 20% 16%;
+  --accent-foreground: 215 30% 92%;
+  --destructive: 0 68% 55%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 224 18% 20%;
+  --input: 224 18% 20%;
+  --ring: 226 100% 65%;
+
+  /* Input-specific */
+  --input-bg: 224 28% 13%;
+  --input-text: 215 30% 94%;
+  --input-placeholder: 215 18% 50%;
+  --input-border: 224 18% 22%;
+  --input-border-focus: 226 100% 65%;
+}
+
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Set dark by default until JS runs — prevents wrong-class flash */
+  color-scheme: dark;
+}
+.light {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ─────────────────────────────────────────────
+   INPUTS, TEXTAREA, SELECT — FORCE CORRECT COLORS
+   (browser autofill & native select can override background)
+───────────────────────────────────────────── */
+input,
+textarea,
+select {
+  background-color: hsl(var(--input-bg));
+  color: hsl(var(--input-text));
+  border-color: hsl(var(--input-border));
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: hsl(var(--input-placeholder));
+  opacity: 1;
+}
+
+/* Fix native <select> option text in dark mode */
+select option {
+  background-color: hsl(var(--popover));
+  color: hsl(var(--popover-foreground));
+}
+
+/* Fix Chrome autofill yellow flash in dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--input-bg)) inset !important;
+  -webkit-text-fill-color: hsl(var(--input-text)) !important;
+  caret-color: hsl(var(--input-text));
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ─────────────────────────────────────────────
+   FOCUS RING
+───────────────────────────────────────────── */
+[data-focus-visible]:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* ─────────────────────────────────────────────
+   SKELETON SHIMMER
+───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--border)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+/* ─────────────────────────────────────────────
+   SIDEBAR TRANSITION
+───────────────────────────────────────────── */
+.sidebar-transition {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─────────────────────────────────────────────
+   PRODUCT CARD HOVER
+───────────────────────────────────────────── */
+.product-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px -6px rgba(45, 99, 255, 0.22);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* ─────────────────────────────────────────────
+   GRADIENT TEXT
+───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #4d7fff 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────────
+   GLASS CARD
+───────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.dark .glass-card {
+  background: rgba(14, 20, 36, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ─────────────────────────────────────────────
+   GLOW EFFECTS
+───────────────────────────────────────────── */
+.glow-brand {
+  box-shadow: 0 0 24px 0 rgba(45, 99, 255, 0.35);
+}
+.dark .glow-brand {
+  box-shadow: 0 0 32px 0 rgba(77, 127, 255, 0.4);
+}
+
+/* ─────────────────────────────────────────────
+   PREMIUM INPUT ENHANCEMENTS
+   Makes inputs look great in both modes
+───────────────────────────────────────────── */
+.input-field {
+  background-color: hsl(var(--input-bg));
+  color: hsl(var(--input-text));
+  border: 1.5px solid hsl(var(--input-border));
+  border-radius: var(--radius);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+.input-field:hover:not(:disabled) {
+  border-color: hsl(var(--primary) / 0.5);
+}
+.input-field:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+  outline: none;
+}
+.dark .input-field {
+  box-shadow: inset 0 1.5px 4px rgba(0,0,0,0.3);
+}
+.dark .input-field:focus {
+  box-shadow: inset 0 1.5px 4px rgba(0,0,0,0.3), 0 0 0 3px hsl(var(--primary) / 0.2);
+}
+
+/* ─────────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(14px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-14px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50%       { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); }
+}
+
+.animate-fade-in   { animation: fadeIn   0.3s ease-in-out; }
+.animate-slide-up  { animation: slideUp  0.3s ease-out; }
+.animate-slide-down{ animation: slideDown 0.3s ease-out; }
+.animate-scale-in  { animation: scaleIn  0.25s ease-out; }
+.animate-pulse-glow{ animation: pulseGlow 2s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────────
+   MISC UTILITY
+───────────────────────────────────────────── */
+
+/* Surface shimmer on hover (stat cards, etc.) */
+.surface-hover {
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.surface-hover:hover {
+  background-color: hsl(var(--accent));
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 0 4px 16px 0 hsl(var(--primary) / 0.08);
+}
+
+/* Divider gradient */
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    hsl(var(--border)),
+    transparent
+  );
+}
