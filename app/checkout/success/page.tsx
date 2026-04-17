@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { getCheckoutOrderDetails } from "@/services/checkout-query.service";
 
-interface Props { searchParams: { session_id?: string } }
+interface Props { searchParams: Promise<{ session_id?: string }> }
 
 async function OrderDetails({ sessionId }: { sessionId: string }) {
   const order = await getCheckoutOrderDetails(sessionId);
@@ -30,7 +30,8 @@ async function OrderDetails({ sessionId }: { sessionId: string }) {
   );
 }
 
-export default function CheckoutSuccessPage({ searchParams }: Props) {
+export default async function CheckoutSuccessPage(props: Props) {
+  const searchParams = await props.searchParams;
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
       <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950 mb-6 animate-fade-in">

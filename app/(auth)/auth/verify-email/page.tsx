@@ -4,9 +4,10 @@ import { CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-interface Props { searchParams: { token?: string } }
+interface Props { searchParams: Promise<{ token?: string }> }
 
-export default async function VerifyEmailPage({ searchParams }: Props) {
+export default async function VerifyEmailPage(props: Props) {
+  const searchParams = await props.searchParams;
   if (!searchParams.token) redirect("/auth/login");
 
   const result = await verifyEmail(searchParams.token);

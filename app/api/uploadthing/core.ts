@@ -21,7 +21,9 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("[UploadThing] Product file uploaded by:", metadata.userId);
-      return { url: file.url, key: file.key };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const f = file as any;
+      return { url: f.url || f.appUrl || f.ufsUrl, key: f.key || f.fileKey };
     }),
 
   // Thumbnail images
@@ -36,7 +38,9 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("[UploadThing] Thumbnail uploaded by:", metadata.userId);
-      return { url: file.url, key: file.key };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const f = file as any;
+      return { url: f.url || f.appUrl || f.ufsUrl, key: f.key || f.fileKey };
     }),
 
   // Avatar uploads (any authenticated user)
@@ -48,7 +52,9 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("[UploadThing] Avatar uploaded by:", metadata.userId);
-      return { url: file.url, key: file.key };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const f = file as any;
+      return { url: f.url || f.appUrl || f.ufsUrl, key: f.key || f.fileKey };
     }),
 } satisfies FileRouter;
 

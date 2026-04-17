@@ -6,9 +6,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getVendorProductForEdit } from "@/services/vendor-query.service";
 
-interface Props { params: { id: string } }
+interface Props { params: Promise<{ id: string }> }
 
-export default async function EditProductPage({ params }: Props) {
+export default async function EditProductPage(props: Props) {
+  const params = await props.params;
   const user = await requireVendor();
   const product = await getVendorProductForEdit(user.id, params.id);
   if (!product) notFound();

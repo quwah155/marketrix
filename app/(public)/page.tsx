@@ -15,10 +15,11 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function HomePage({ searchParams }: PageProps) {
+export default async function HomePage(props: PageProps) {
+  const searchParams = await props.searchParams;
   return (
     <>
       {/* Hero Section */}

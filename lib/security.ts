@@ -38,7 +38,7 @@ export function getClientIp(req: NextRequest): string {
   if (forwardedFor) {
     return forwardedFor.split(",")[0].trim();
   }
-  return req.ip ?? "unknown";
+  return req.headers.get("x-real-ip") ?? "unknown";
 }
 
 export async function applyRateLimit(options: {

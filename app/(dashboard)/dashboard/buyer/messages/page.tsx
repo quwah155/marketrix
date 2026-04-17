@@ -6,9 +6,10 @@ import { MessageSquare } from "lucide-react";
 import { getBuyerMessagesData } from "@/services/buyer-query.service";
 import type { MessageWithSender } from "@/types";
 
-interface Props { searchParams: { vendor?: string; thread?: string } }
+interface Props { searchParams: Promise<{ vendor?: string; thread?: string }> }
 
-export default async function BuyerMessagesPage({ searchParams }: Props) {
+export default async function BuyerMessagesPage(props: Props) {
+  const searchParams = await props.searchParams;
   const user = await requireAuth();
 
   // If coming from product page with vendor param, get/create thread

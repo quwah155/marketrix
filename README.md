@@ -174,8 +174,12 @@ Use `.env.local` for local dev. Start from `.env.example`.
 - `STRIPE_WEBHOOK_SECRET`
 
 ### Email
-- `RESEND_API_KEY`
 - `EMAIL_FROM`
+- `SMTP_URL` or `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_SECURE`
+- `SMTP_USER`
+- `SMTP_PASS`
 
 ### Pusher
 - `PUSHER_APP_ID`

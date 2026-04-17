@@ -39,10 +39,11 @@ type ProductDetail = Omit<ProductWithVendor, "vendor" | "reviews"> & {
 };
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const product = await getProductMetaBySlug(params.slug);
   if (!product) return { title: "Product Not Found" };
 
@@ -57,7 +58,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage(props: Props) {
+  const params = await props.params;
   const [product, session] = await Promise.all([
     getPublishedProductBySlugWithDetails(params.slug),
     getServerSession(authOptions),

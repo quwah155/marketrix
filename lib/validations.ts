@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ProductCategory, ProductStatus, Role } from "@/types/db";
 
-const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, "Invalid ID");
+export const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, "Invalid ID");
 
 // ================================
 // Auth Schemas

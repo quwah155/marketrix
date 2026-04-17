@@ -3,10 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { applyRateLimit, csrfErrorResponse, validateSameOrigin } from "@/lib/security";
 import { createCheckoutForProduct } from "@/services/payment.service";
+import { objectIdSchema } from "@/lib/validations";
 import { z } from "zod";
 
 const bodySchema = z.object({
-  productId: z.string().cuid(),
+  productId: objectIdSchema,
 });
 
 export async function POST(req: NextRequest) {

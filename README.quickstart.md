@@ -30,8 +30,12 @@ Minimum required for local app boot:
 - `STRIPE_SECRET_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `RESEND_API_KEY`
 - `EMAIL_FROM`
+- `SMTP_URL` or `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_SECURE`
+- `SMTP_USER`
+- `SMTP_PASS`
 - `PUSHER_APP_ID`
 - `PUSHER_KEY`
 - `PUSHER_SECRET`
@@ -43,6 +47,14 @@ Minimum required for local app boot:
 
 Optional:
 - `REDIS_URL` (rate limiting/caching). If missing/invalid, app still runs.
+
+For Gmail SMTP, use:
+- `SMTP_HOST=smtp.gmail.com`
+- `SMTP_PORT=465`
+- `SMTP_SECURE=true`
+- `SMTP_USER=your@gmail.com`
+- `SMTP_PASS=your Gmail App Password`
+- `EMAIL_FROM=your@gmail.com`
 
 ## 4. Database
 Optional seed:

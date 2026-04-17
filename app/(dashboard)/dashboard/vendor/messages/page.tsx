@@ -6,10 +6,11 @@ import { getVendorMessagesData } from "@/services/vendor-query.service";
 import type { MessageWithSender } from "@/types";
 
 interface Props {
-  searchParams: { thread?: string };
+  searchParams: Promise<{ thread?: string }>;
 }
 
-export default async function VendorMessagesPage({ searchParams }: Props) {
+export default async function VendorMessagesPage(props: Props) {
+  const searchParams = await props.searchParams;
   const user = await requireVendor();
   const activeThreadId = searchParams.thread;
 

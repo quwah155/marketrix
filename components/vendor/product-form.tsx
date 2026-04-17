@@ -131,10 +131,12 @@ export function ProductForm({ productId, defaultValues }: ProductFormProps) {
               ) : (
                 <UploadButton<OurFileRouter, "productFile">
                   endpoint="productFile"
-                  onClientUploadComplete={(res) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onClientUploadComplete={(res: any) => {
                     if (res?.[0]?.url) { setFileUrl(res[0].url); toast.success("File uploaded!"); }
                   }}
-                  onUploadError={(err) => { toast.error("Upload failed: " + err.message); }}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onUploadError={(err: any) => { toast.error("Upload failed: " + err.message); }}
                   appearance={{
                     button: "bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl px-4 py-2 text-sm",
                   }}
@@ -163,10 +165,12 @@ export function ProductForm({ productId, defaultValues }: ProductFormProps) {
                   </div>
                   <UploadButton<OurFileRouter, "productThumbnail">
                     endpoint="productThumbnail"
-                    onClientUploadComplete={(res) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onClientUploadComplete={(res: any) => {
                       if (res?.[0]?.url) { setThumbnailUrl(res[0].url); toast.success("Thumbnail uploaded!"); }
                     }}
-                    onUploadError={(err) => { toast.error("Upload failed: " + err.message); }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onUploadError={(err: any) => { toast.error("Upload failed: " + err.message); }}
                     appearance={{
                       button: "bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl px-4 py-2 text-sm w-full",
                     }}

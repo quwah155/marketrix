@@ -15,10 +15,11 @@ export const metadata: Metadata = {
 };
 
 interface Props {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function ProductsPage({ searchParams }: Props) {
+export default async function ProductsPage(props: Props) {
+  const searchParams = await props.searchParams;
   return (
     <>
       {/* Header */}
