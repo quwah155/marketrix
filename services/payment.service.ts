@@ -11,7 +11,7 @@ export async function createCheckoutForProduct(input: {
   buyerEmail: string;
 }) {
   const product = await productRepository.findPublishedByIdWithVendorUser(
-    input.productId
+    input.productId,
   );
 
   if (!product) {
@@ -19,12 +19,15 @@ export async function createCheckoutForProduct(input: {
   }
 
   if (product.vendor.userId === input.buyerId) {
-    return { error: "You cannot purchase your own product", status: 400 as const };
+    return {
+      error: "You cannot purchase your own product",
+      status: 400 as const,
+    };
   }
 
   const existingOrder = await orderRepository.findCompletedByBuyerAndProduct(
     input.buyerId,
-    input.productId
+    input.productId,
   );
 
   if (existingOrder) {
@@ -78,15 +81,16 @@ export async function createCheckoutForProduct(input: {
 export async function processStripeWebhook(body: string, signature: string) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return { error: "Missing STRIPE_WEBHOOK_SECRET", status: 500 as const };
-    
   }
+
   console.log("webhook received");
+
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
     console.log("EVENT TYPE:", event.type);
   } catch {
@@ -97,7 +101,7 @@ export async function processStripeWebhook(body: string, signature: string) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       console.log("Checkout session completed for session ID:", session.id);
-      await handleCheckoutComplete(session);
+      await finalizeCheckoutSession(session);
       break;
     }
     case "checkout.session.expired": {
@@ -108,39 +112,41 @@ export async function processStripeWebhook(body: string, signature: string) {
       break;
     }
     default:
-  console.log(" Unhandled event type:", event.type); 
+      console.log("Unhandled event type:", event.type);
   }
 
   return { success: true as const };
 }
 
-async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
-
+export async function finalizeCheckoutSession(session: Stripe.Checkout.Session) {
   console.log("session metadata:", session.metadata);
-  const { orderId, vendorId } = session.metadata ?? {};
 
-  if (!orderId || !vendorId){
+  const { orderId, vendorId } = session.metadata ?? {};
+  if (!orderId || !vendorId) {
     console.log("missing metadata - skipping");
-    return;
+    return null;
+  }
+
+  if (session.payment_status !== "paid") {
+    console.log("session not paid yet - skipping", session.id, session.payment_status);
+    return null;
   }
 
   const order = await orderRepository.findById(orderId);
-
   if (!order) {
-    console.log("❌ Order not found:", orderId);
-    return;
+    console.log("Order not found:", orderId);
+    return null;
   }
 
   if (order.status === "COMPLETED") {
-    console.log("⚠️ Order already completed:", orderId);
-    return;
+    console.log("Order already completed:", orderId);
+    return order;
   }
 
-  console.log("✅ Processing order:", orderId);
+  console.log("Processing order:", orderId);
 
   const { platformFee, vendorEarning } = calculateFees(order.amount);
-
-  await orderRepository.completeAndCreditVendor({
+  const completedOrder = await orderRepository.completeAndCreditVendor({
     orderId,
     platformFee,
     vendorEarning,
@@ -148,5 +154,16 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     vendorId,
   });
 
-  console.log("🎉 Order completed and vendor credited");
+  if (!completedOrder) {
+    console.log("order completion skipped because it was already processed:", orderId);
+    return orderRepository.findById(orderId);
+  }
+
+  console.log("Order completed and vendor credited");
+  return completedOrder;
+}
+
+export async function finalizeCheckoutSessionById(sessionId: string) {
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  return finalizeCheckoutSession(session);
 }

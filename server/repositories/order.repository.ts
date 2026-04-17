@@ -61,8 +61,8 @@ export const orderRepository = {
     vendorId: string;
   }) {
     await connectToDatabase();
-    const order = await OrderModel.findByIdAndUpdate(
-      input.orderId,
+    const order = await OrderModel.findOneAndUpdate(
+      { _id: input.orderId, status: OrderStatus.PENDING },
       {
         status: OrderStatus.COMPLETED,
         platformFee: input.platformFee,
@@ -71,9 +71,13 @@ export const orderRepository = {
       },
       { new: true }
     ).lean({ virtuals: true }) as any;
+
+    if (!order) return null;
+
     await VendorProfileModel.findByIdAndUpdate(input.vendorId, {
       $inc: { balance: input.vendorEarning },
     });
+
     return normalizeDoc(order);
   },
 
