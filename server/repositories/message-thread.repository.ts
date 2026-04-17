@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/mongoose";
-import { MessageThreadModel } from "@/server/models";
+import { MessageThreadModel, VendorProfileModel } from "@/server/models";
 import { normalizeDoc, normalizeDocs } from "@/server/models/helpers";
 
 export interface MessageParticipant {
@@ -83,6 +83,20 @@ function normalizeThread(
   });
 }
 
+async function normalizeLegacyVendorThreadIdsForUser(userId: string) {
+  const vendorProfile = await VendorProfileModel.findOne({ userId })
+    .select({ _id: 1 })
+    .lean() as { _id?: { toString(): string } } | null;
+
+  const vendorProfileId = vendorProfile?._id?.toString();
+  if (!vendorProfileId || vendorProfileId === userId) return;
+
+  await MessageThreadModel.updateMany(
+    { vendorId: vendorProfileId },
+    { vendorId: userId },
+  );
+}
+
 export const messageThreadRepository = {
   async findById(threadId: string) {
     await connectToDatabase();
@@ -123,10 +137,45 @@ export const messageThreadRepository = {
     return normalizeDoc<MessageThreadRecord>(doc);
   },
 
+  async findBuyerVendorThreadByCandidates(buyerId: string, vendorIds: string[]) {
+    await connectToDatabase();
+    const doc = await MessageThreadModel.findOne({
+      buyerId,
+      vendorId: { $in: vendorIds },
+    }).lean({ virtuals: true });
+    if (!doc) return null;
+    return normalizeDoc<MessageThreadRecord>(doc);
+  },
+
   async create(buyerId: string, vendorId: string) {
     await connectToDatabase();
     const doc = await MessageThreadModel.create({ buyerId, vendorId });
     return normalizeDoc<MessageThreadRecord>(doc.toObject());
+  },
+
+  async updateVendorId(threadId: string, vendorId: string) {
+    await connectToDatabase();
+    const doc = await MessageThreadModel.findByIdAndUpdate(
+      threadId,
+      { vendorId },
+      { new: true }
+    ).lean({ virtuals: true });
+    if (!doc) return null;
+    return normalizeDoc<MessageThreadRecord>(doc);
+  },
+
+  async updateParticipants(
+    threadId: string,
+    updates: { buyerId?: string; vendorId?: string }
+  ) {
+    await connectToDatabase();
+    const doc = await MessageThreadModel.findByIdAndUpdate(
+      threadId,
+      updates,
+      { new: true }
+    ).lean({ virtuals: true });
+    if (!doc) return null;
+    return normalizeDoc<MessageThreadRecord>(doc);
   },
 
   async updateTimestamp(threadId: string) {
@@ -142,6 +191,7 @@ export const messageThreadRepository = {
 
   async findForUserWithLastMessage(userId: string) {
     await connectToDatabase();
+    await normalizeLegacyVendorThreadIdsForUser(userId);
     const docs = await MessageThreadModel.find({
       $or: [{ buyerId: userId }, { vendorId: userId }],
     })
@@ -160,6 +210,7 @@ export const messageThreadRepository = {
 
   async findByIdForUserWithMessages(threadId: string, userId: string) {
     await connectToDatabase();
+    await normalizeLegacyVendorThreadIdsForUser(userId);
     const doc = await MessageThreadModel.findOne({
       _id: threadId,
       $or: [{ buyerId: userId }, { vendorId: userId }],

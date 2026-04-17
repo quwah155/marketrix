@@ -182,6 +182,67 @@ export async function getVendorBalanceData(userId: string) {
   return { vendorProfile: normalizeDoc(vendorProfileDoc), completedOrders };
 }
 
+export async function getVendorOrdersData(userId: string) {
+  await connectToDatabase();
+  const vendorProfileDoc = await VendorProfileModel.findOne({ userId }).lean({
+    virtuals: true,
+  }) as any;
+  if (!vendorProfileDoc) return null;
+
+  const products = await ProductModel.find({ vendorId: vendorProfileDoc._id })
+    .select({ _id: 1 })
+    .lean() as any;
+
+  const productIds = products.map((product: { _id: unknown }) => product._id);
+
+  const [ordersRaw, pendingOrders, completedOrders, refundedOrders, failedOrders] =
+    await Promise.all([
+      OrderModel.find({
+        productId: { $in: productIds },
+      })
+        .populate({ path: "productId", select: { title: 1, slug: 1, thumbnail: 1 } })
+        .populate({ path: "buyerId", select: { name: 1, email: 1 } })
+        .sort({ createdAt: -1 })
+        .lean({ virtuals: true }) as any,
+      OrderModel.countDocuments({
+        productId: { $in: productIds },
+        status: OrderStatus.PENDING,
+      }),
+      OrderModel.countDocuments({
+        productId: { $in: productIds },
+        status: OrderStatus.COMPLETED,
+      }),
+      OrderModel.countDocuments({
+        productId: { $in: productIds },
+        status: OrderStatus.REFUNDED,
+      }),
+      OrderModel.countDocuments({
+        productId: { $in: productIds },
+        status: OrderStatus.FAILED,
+      }),
+    ]);
+
+  const orders = normalizeDocs(
+    ordersRaw.map((order: any) => ({
+      ...order,
+      product: normalizeDoc(order.productId as Record<string, unknown>),
+      buyer: normalizeDoc(order.buyerId as Record<string, unknown>),
+    })),
+  );
+
+  return {
+    vendorProfile: normalizeDoc(vendorProfileDoc),
+    orders,
+    stats: {
+      total: orders.length,
+      pending: pendingOrders,
+      completed: completedOrders,
+      refunded: refundedOrders,
+      failed: failedOrders,
+    },
+  };
+}
+
 export async function getVendorProductsData(userId: string) {
   await connectToDatabase();
   const vendorProfileDoc = await VendorProfileModel.findOne({ userId }).lean({

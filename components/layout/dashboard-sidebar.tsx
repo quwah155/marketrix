@@ -32,11 +32,20 @@ interface NavItem {
 
 const vendorNav: NavItem[] = [
   { label: "Overview", href: "/dashboard/vendor", icon: LayoutDashboard },
+  { label: "Orders", href: "/dashboard/vendor/orders", icon: ShoppingBag },
   { label: "Products", href: "/dashboard/vendor/products", icon: Package },
-  { label: "New Product", href: "/dashboard/vendor/products/new", icon: PlusCircle },
+  {
+    label: "New Product",
+    href: "/dashboard/vendor/products/new",
+    icon: PlusCircle,
+  },
   { label: "Analytics", href: "/dashboard/vendor/analytics", icon: BarChart3 },
   { label: "Balance", href: "/dashboard/vendor/balance", icon: Wallet },
-  { label: "Messages", href: "/dashboard/vendor/messages", icon: MessageSquare },
+  {
+    label: "Messages",
+    href: "/dashboard/vendor/messages",
+    icon: MessageSquare,
+  },
   { label: "Settings", href: "/dashboard/vendor/settings", icon: Settings },
 ];
 
@@ -72,11 +81,16 @@ export function DashboardSidebar() {
     <aside
       className={cn(
         "flex flex-col border-r border-border bg-[hsl(var(--card))] transition-[width] duration-300 ease-in-out h-screen sticky top-0 overflow-hidden",
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-16" : "w-64",
       )}
     >
       {/* Brand */}
-      <div className={cn("flex h-16 items-center border-b border-border px-4", collapsed ? "justify-center" : "gap-3")}>
+      <div
+        className={cn(
+          "flex h-16 items-center border-b border-border px-4",
+          collapsed ? "justify-center" : "gap-3",
+        )}
+      >
         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500 shadow-brand">
           <Store className="h-4 w-4 text-white" />
         </div>
@@ -91,7 +105,9 @@ export function DashboardSidebar() {
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-0.5">
         {nav.map((item) => {
           const isActive =
-            item.href === "/dashboard/vendor" || item.href === "/dashboard/buyer" || item.href === "/admin"
+            item.href === "/dashboard/vendor" ||
+            item.href === "/dashboard/buyer" ||
+            item.href === "/admin"
               ? pathname === item.href
               : pathname.startsWith(item.href);
           return (
@@ -104,13 +120,13 @@ export function DashboardSidebar() {
                 collapsed ? "justify-center" : "",
                 isActive
                   ? "bg-brand-500/10 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 shadow-[inset_2px_0_0_0_hsl(var(--primary))]"
-                  : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]"
+                  : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]",
               )}
             >
               <item.icon
                 className={cn(
                   "h-4 w-4 flex-shrink-0 transition-colors",
-                  isActive ? "text-brand-500 dark:text-brand-400" : ""
+                  isActive ? "text-brand-500 dark:text-brand-400" : "",
                 )}
               />
               {!collapsed && <span>{item.label}</span>}
@@ -127,8 +143,12 @@ export function DashboardSidebar() {
               {session.user.name?.[0]?.toUpperCase() ?? "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium truncate text-[hsl(var(--foreground))]">{session.user.name}</p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))] capitalize">{session.user.role?.toLowerCase()}</p>
+              <p className="text-sm font-medium truncate text-[hsl(var(--foreground))]">
+                {session.user.name}
+              </p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] capitalize">
+                {session.user.role?.toLowerCase()}
+              </p>
             </div>
           </div>
         </div>
@@ -149,4 +169,3 @@ export function DashboardSidebar() {
     </aside>
   );
 }
-

@@ -152,7 +152,14 @@ export default async function VendorDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-base">Recent Sales</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard/vendor/orders">
+                <Button variant="ghost" size="sm">
+                  View all
+                </Button>
+              </Link>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </div>
           </CardHeader>
           <CardContent>
             {vendorRecentOrders.length === 0 ? (

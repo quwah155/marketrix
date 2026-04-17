@@ -3,14 +3,43 @@ import type { ApiResponse, MessageWithSender } from "@/types";
 import { messageRepository } from "@/server/repositories/message.repository";
 import { messageThreadRepository } from "@/server/repositories/message-thread.repository";
 import { userRepository } from "@/server/repositories/user.repository";
+import { vendorProfileRepository } from "@/server/repositories/vendor-profile.repository";
+
+async function getAuthorizedThreadForUser(threadId: string, userId: string) {
+  const thread = await messageThreadRepository.findById(threadId);
+  if (!thread) return null;
+
+  if (thread.buyerId === userId || thread.vendorId === userId) {
+    return thread;
+  }
+
+  const vendorProfile = await vendorProfileRepository.findByUserId(userId);
+  if (vendorProfile?.id) {
+    const updates: { buyerId?: string; vendorId?: string } = {};
+
+    if (thread.vendorId === vendorProfile.id) {
+      updates.vendorId = userId;
+    }
+
+    if (thread.buyerId === vendorProfile.id) {
+      updates.buyerId = userId;
+    }
+
+    if (updates.buyerId || updates.vendorId) {
+      await messageThreadRepository.updateParticipants(threadId, updates);
+      return messageThreadRepository.findById(threadId);
+    }
+  }
+
+  return null;
+}
 
 export async function canUserAccessThread(
   threadId: string,
   userId: string
 ): Promise<boolean> {
-  const thread = await messageThreadRepository.findByIdWithParticipants(threadId);
-  if (!thread) return false;
-  return thread.buyerId === userId || thread.vendorId === userId;
+  const thread = await getAuthorizedThreadForUser(threadId, userId);
+  return !!thread;
 }
 
 export async function sendThreadMessage(input: {
@@ -18,12 +47,8 @@ export async function sendThreadMessage(input: {
   senderId: string;
   content: string;
 }): Promise<ApiResponse<MessageWithSender>> {
-  const thread = await messageThreadRepository.findById(input.threadId);
+  const thread = await getAuthorizedThreadForUser(input.threadId, input.senderId);
   if (!thread) {
-    return { success: false, error: "Thread not found" };
-  }
-
-  if (thread.buyerId !== input.senderId && thread.vendorId !== input.senderId) {
     return { success: false, error: "Forbidden" };
   }
 
@@ -88,12 +113,21 @@ export async function getOrCreateThreadByBuyerVendor(input: {
     return { success: false, error: "Vendor not found" };
   }
 
-  const existing = await messageThreadRepository.findEitherDirectionThread(
+  const vendorProfile = await vendorProfileRepository.findByUserId(input.vendorUserId);
+  const vendorCandidates = [input.vendorUserId];
+  if (vendorProfile?.id) {
+    vendorCandidates.push(vendorProfile.id);
+  }
+
+  const existing = await messageThreadRepository.findBuyerVendorThreadByCandidates(
     input.buyerId,
-    input.vendorUserId
+    vendorCandidates
   );
 
   if (existing) {
+    if (existing.vendorId !== input.vendorUserId) {
+      await messageThreadRepository.updateVendorId(existing.id, input.vendorUserId);
+    }
     return { success: true, data: { threadId: existing.id } };
   }
 

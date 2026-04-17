@@ -1,7 +1,11 @@
 import Stripe from "stripe";
+import { connectToDatabase } from "@/lib/mongoose";
 import { stripe, calculateFees } from "@/lib/stripe";
+import { OrderStatus } from "@/types/db";
+import type { ApiResponse } from "@/types";
 import { orderRepository } from "@/server/repositories/order.repository";
 import { productRepository } from "@/server/repositories/product.repository";
+import { OrderModel, VendorProfileModel } from "@/server/models";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -166,4 +170,60 @@ export async function finalizeCheckoutSession(session: Stripe.Checkout.Session) 
 export async function finalizeCheckoutSessionById(sessionId: string) {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   return finalizeCheckoutSession(session);
+}
+
+export async function syncVendorOrderPaymentStatus(input: {
+  userId: string;
+  orderId: string;
+}): Promise<ApiResponse<{ id: string; status: OrderStatus }>> {
+  await connectToDatabase();
+
+  const vendorProfile = await VendorProfileModel.findOne({ userId: input.userId })
+    .select({ _id: 1 })
+    .lean() as { _id?: { toString(): string } } | null;
+
+  if (!vendorProfile?._id) {
+    return { success: false, error: "Vendor profile not found" };
+  }
+
+  const order = await OrderModel.findById(input.orderId)
+    .populate({ path: "productId", select: { vendorId: 1 } })
+    .select({ _id: 1, status: 1, stripeSessionId: 1, productId: 1 })
+    .lean({ virtuals: true }) as any;
+
+  if (!order) {
+    return { success: false, error: "Order not found" };
+  }
+
+  const product = order.productId as Record<string, unknown> | null;
+  const productVendorId = product?.vendorId?.toString?.();
+  if (!productVendorId || productVendorId !== vendorProfile._id.toString()) {
+    return { success: false, error: "You do not have access to this order" };
+  }
+
+  if (order.status === OrderStatus.COMPLETED) {
+    return {
+      success: true,
+      data: { id: order.id ?? order._id?.toString(), status: OrderStatus.COMPLETED },
+      message: "Order is already completed",
+    };
+  }
+
+  if (!order.stripeSessionId) {
+    return { success: false, error: "Missing Stripe session for this order" };
+  }
+
+  const finalizedOrder = await finalizeCheckoutSessionById(order.stripeSessionId);
+  if (!finalizedOrder) {
+    return { success: false, error: "Payment is not marked as paid in Stripe yet" };
+  }
+
+  return {
+    success: true,
+    data: { id: finalizedOrder.id, status: finalizedOrder.status as OrderStatus },
+    message:
+      finalizedOrder.status === OrderStatus.COMPLETED
+        ? "Order synced successfully"
+        : "Order checked, but payment is still pending",
+  };
 }
