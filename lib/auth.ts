@@ -74,7 +74,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid email or password");
         }
 
-        if (!user.emailVerified) {
+        const smtpConfigured =
+          !!(process.env.SMTP_URL || (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS));
+        if (!user.emailVerified && smtpConfigured) {
           throw new Error("Please verify your email before signing in");
         }
 

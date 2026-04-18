@@ -1,11 +1,5 @@
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error("Missing MONGODB_URI");
-}
-
 type MongoCache = {
   client: MongoClient | null;
   promise: Promise<MongoClient> | null;
@@ -19,13 +13,34 @@ if (!globalForMongo.mongo) {
 
 const cache = globalForMongo.mongo;
 
-if (!cache!.promise) {
-  const client = new MongoClient(MONGODB_URI);
-  cache!.promise = client.connect().then((connected) => {
-    cache!.client = connected;
-    return connected;
-  });
+function getClientPromise(): Promise<MongoClient> {
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    throw new Error("Missing MONGODB_URI environment variable");
+  }
+
+  if (!cache!.promise) {
+    const client = new MongoClient(MONGODB_URI);
+    cache!.promise = client.connect().then((connected) => {
+      cache!.client = connected;
+      return connected;
+    });
+  }
+
+  return cache!.promise;
 }
 
-export const clientPromise = cache!.promise;
-
+// Lazy proxy — the promise is only created when first accessed
+export const clientPromise: Promise<MongoClient> = new Proxy(
+  {} as Promise<MongoClient>,
+  {
+    get(_target, prop) {
+      const promise = getClientPromise();
+      const value = (promise as unknown as Record<string | symbol, unknown>)[prop];
+      if (typeof value === "function") {
+        return value.bind(promise);
+      }
+      return value;
+    },
+  }
+);
