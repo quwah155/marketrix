@@ -25,7 +25,19 @@ export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise) as NextAuthOptions["adapter"],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 24 * 60 * 60,  // 1 day absolute expiry
+    updateAge: 60 * 60,    // rolling: refresh token every hour of active use
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
   pages: {
     signIn: "/auth/login",

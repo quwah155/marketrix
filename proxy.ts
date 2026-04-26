@@ -7,6 +7,7 @@ import { getToken } from "next-auth/jwt";
  *
  * Lightweight edge checks only:
  *   - Cookie-based session presence (no DB calls)
+ *   - JWT expiry enforcement (exp claim)
  *   - Role-based redirects using JWT payload
  *   - Security headers
  *
@@ -43,6 +44,18 @@ export default async function proxy(req: NextRequest) {
     const loginUrl = new URL("/auth/login", req.url);
     loginUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // ─── Enforce JWT expiry (belt-and-suspenders against stale cookies) ────────
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  if (token.exp && nowInSeconds > (token.exp as number)) {
+    const loginUrl = new URL("/auth/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", req.url);
+    const response = NextResponse.redirect(loginUrl);
+    // Clear the stale session cookie so the browser doesn't reuse it
+    response.cookies.delete("next-auth.session-token");
+    response.cookies.delete("__Secure-next-auth.session-token");
+    return response;
   }
 
   const role = token.role as string | undefined;
