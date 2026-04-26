@@ -92,19 +92,20 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      // --- First login: stamp id + role from the authorize() return value ---
       if (user) {
         token.id = user.id;
         token.role = (user as { role: Role }).role;
       }
 
-      // Handle session updates
+      // --- Explicit session update (e.g. role promotion) ---
       if (trigger === "update" && session) {
         token.name = session.name;
         token.role = session.role;
       }
 
-      // Always fetch fresh role from DB (for role changes)
-      if (token.id) {
+      // --- First time role is missing (e.g. OAuth sign-in) — fetch once ---
+      if (token.id && !token.role) {
         await connectToDatabase();
         const dbUser = await UserModel.findById(token.id as string)
           .select({ role: 1, name: 1, image: 1 })
