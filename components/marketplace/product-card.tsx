@@ -20,7 +20,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${product.slug}`} className="group">
       <div className="product-card rounded-2xl border border-border bg-card overflow-hidden h-full flex flex-col">
         {/* Thumbnail */}
-        <div className="relative h-48 bg-brand-50 dark:bg-brand-950/30 overflow-hidden">
+        <div className="relative h-48 overflow-hidden" style={{ background: "rgba(0,39,44,0.06)" }}>
           {product.thumbnail ? (
             <Image
               src={product.thumbnail}
@@ -31,7 +31,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <ShoppingCart className="h-12 w-12 text-brand-200" />
+              <ShoppingCart className="h-12 w-12" style={{ color: "rgba(0,39,44,0.25)" }} />
             </div>
           )}
           <div className="absolute top-3 left-3">
@@ -45,19 +45,26 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="p-5 flex flex-col flex-1 gap-3">
           {/* Vendor */}
           <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-brand-500 flex items-center justify-center text-white text-[10px] font-bold">
+            <div
+              className="h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+              style={{ background: "#00272c", color: "#e1ff51" }}
+            >
               {product.vendor.user.name?.[0]?.toUpperCase() ?? "V"}
             </div>
-            <span className="text-xs text-muted-foreground truncate">
+            {/* explicit dark foreground so it's readable on white cards in light mode */}
+            <span className="text-xs truncate font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>
               {product.vendor.user.name}
             </span>
             {product.vendor.verified && (
-              <span className="ml-auto text-xs text-emerald-500 font-medium">✓</span>
+              <span className="ml-auto text-xs text-emerald-600 dark:text-emerald-400 font-medium">✓</span>
             )}
           </div>
 
-          {/* Title */}
-          <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-brand-500 transition-colors">
+          {/* Title — always high contrast */}
+          <h3
+            className="font-semibold text-sm leading-snug line-clamp-2 transition-colors"
+            style={{ color: "hsl(var(--card-foreground))" }}
+          >
             {product.title}
           </h3>
 
@@ -76,7 +83,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   />
                 ))}
               </div>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>
                 {avgRating} ({reviewCount})
               </span>
             </div>
@@ -84,10 +91,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Footer */}
           <div className="mt-auto flex items-center justify-between">
-            <span className="text-lg font-bold text-brand-600 dark:text-brand-400">
+            {/* Price — chartreuse-family in dark, deep teal in light */}
+            <span
+              className="text-lg font-bold"
+              style={{ color: "hsl(var(--primary))" }}
+            >
               {formatPrice(product.price)}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>
               {orderCount} sold
             </span>
           </div>

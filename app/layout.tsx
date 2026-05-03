@@ -12,25 +12,34 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "quwahmarket-saas - Premium Digital Products",
-    template: "%s | quwahmarket-saas",
+    default: "Marketrix — Premium Digital Products Marketplace",
+    template: "%s | Marketrix",
   },
   description:
     "Discover and purchase premium digital products from verified vendors. Templates, courses, software, and more.",
-  keywords: ["digital marketplace", "templates", "courses", "software", "saas"],
-  authors: [{ name: "quwahmarket-saas" }],
+  keywords: ["digital marketplace", "templates", "courses", "software", "saas", "marketrix"],
+  authors: [{ name: "Marketrix" }],
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: "/favicon.png",
+    shortcut: "/favicon.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    title: "quwahmarket-saas - Premium Digital Products",
+    title: "Marketrix — Premium Digital Products Marketplace",
     description: "Discover and purchase premium digital products from verified vendors.",
-    siteName: "quwahmarket-saas",
+    siteName: "Marketrix",
+    images: [{ url: "/favicon.png", width: 512, height: 512, alt: "Marketrix" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "quwahmarket-saas",
+    title: "Marketrix",
     description: "Premium digital products marketplace",
+    images: ["/favicon.png"],
   },
   robots: { index: true, follow: true },
 };
@@ -73,4 +82,3 @@ export default function RootLayout({
     </html>
   );
 }
-
