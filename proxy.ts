@@ -1,98 +1,106 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { applySecurityHeaders } from "@/lib/security-headers";
 
-/**
- * Next.js 16 proxy (replaces middleware.ts).
- *
- * Lightweight edge checks only:
- *   - Cookie-based session presence (no DB calls)
- *   - JWT expiry enforcement (exp claim)
- *   - Role-based redirects using JWT payload
- *   - Security headers
- *
- * Heavy auth validation (DB look-ups, role enforcement) stays in
- * server components / server actions via requireAuth() / requireRole().
- */
-export default async function proxy(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
+const PUBLIC_PREFIXES = [
+  "/products",
+  "/auth",
+  "/api/auth",
+  "/api/stripe/webhook",
+  "/api/uploadthing",
+  "/_next",
+  "/favicon",
+  "/unauthorized",
+] as const;
 
-  // ─── Public routes — always allow through ──────────────────────────────────
-  const isPublic =
-    pathname === "/" ||
-    pathname.startsWith("/products") ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/api/stripe/webhook") ||
-    pathname.startsWith("/api/uploadthing") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/unauthorized");
+function isPublicRoute(pathname: string): boolean {
+  if (pathname === "/") return true;
+  return PUBLIC_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+  );
+}
 
-  if (isPublic) {
-    return addSecurityHeaders(NextResponse.next());
+function getSafeCallbackUrl(req: NextRequest): string {
+  const { pathname, search } = req.nextUrl;
+  return `${pathname}${search}`;
+}
+
+function unauthorizedApiResponse(): NextResponse {
+  return applySecurityHeaders(
+    NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  );
+}
+
+function forbiddenApiResponse(): NextResponse {
+  return applySecurityHeaders(
+    NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  );
+}
+
+function redirectToLogin(req: NextRequest, clearCookies = false): NextResponse {
+  const loginUrl = new URL("/auth/login", req.url);
+  loginUrl.searchParams.set("callbackUrl", getSafeCallbackUrl(req));
+
+  const response = applySecurityHeaders(NextResponse.redirect(loginUrl));
+  if (clearCookies) {
+    response.cookies.delete("next-auth.session-token");
+    response.cookies.delete("__Secure-next-auth.session-token");
   }
 
-  // ─── Decode the JWT from the session cookie (edge-safe, no DB) ────────────
+  return response;
+}
+
+export default async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const isApi = pathname.startsWith("/api/");
+
+  if (isPublicRoute(pathname)) {
+    return applySecurityHeaders(NextResponse.next());
+  }
+
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // ─── Not logged in → redirect to login ───────────────────────────────────
   if (!token) {
-    const loginUrl = new URL("/auth/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", req.url);
-    return NextResponse.redirect(loginUrl);
+    return isApi ? unauthorizedApiResponse() : redirectToLogin(req);
   }
 
-  // ─── Enforce JWT expiry (belt-and-suspenders against stale cookies) ────────
   const nowInSeconds = Math.floor(Date.now() / 1000);
   if (token.exp && nowInSeconds > (token.exp as number)) {
-    const loginUrl = new URL("/auth/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", req.url);
-    const response = NextResponse.redirect(loginUrl);
-    // Clear the stale session cookie so the browser doesn't reuse it
-    response.cookies.delete("next-auth.session-token");
-    response.cookies.delete("__Secure-next-auth.session-token");
-    return response;
+    return isApi ? unauthorizedApiResponse() : redirectToLogin(req, true);
   }
 
   const role = token.role as string | undefined;
 
-  // ─── Admin routes ─────────────────────────────────────────────────────────
-  if (pathname.startsWith("/admin") && role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
+  const isAdminRoute =
+    pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
+  if (isAdminRoute && role !== "ADMIN") {
+    return isApi
+      ? forbiddenApiResponse()
+      : applySecurityHeaders(
+          NextResponse.redirect(new URL("/unauthorized", req.url))
+        );
   }
 
-  // ─── Vendor dashboard ─────────────────────────────────────────────────────
-  if (
-    pathname.startsWith("/dashboard/vendor") &&
-    role !== "VENDOR" &&
-    role !== "ADMIN"
-  ) {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
+  const isVendorRoute =
+    pathname.startsWith("/dashboard/vendor") ||
+    pathname.startsWith("/api/vendor");
+  if (isVendorRoute && role !== "VENDOR" && role !== "ADMIN") {
+    return isApi
+      ? forbiddenApiResponse()
+      : applySecurityHeaders(
+          NextResponse.redirect(new URL("/unauthorized", req.url))
+        );
   }
 
-  // ─── Buyer dashboard (any authenticated user) ─────────────────────────────
-  // Already covered by the !token check above, so just pass through.
-
-  return addSecurityHeaders(NextResponse.next());
-}
-
-function addSecurityHeaders(response: NextResponse): NextResponse {
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()"
-  );
-  return response;
+  return applySecurityHeaders(NextResponse.next());
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js)).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js|woff2?|ttf|map)).*)",
   ],
 };

@@ -45,6 +45,25 @@ export const orderRepository = {
     return normalizeDoc(doc);
   },
 
+  async findByIdWithProductVendor(orderId: string) {
+    await connectToDatabase();
+    const doc = await OrderModel.findById(orderId)
+      .populate({ path: "productId", select: { vendorId: 1 } })
+      .lean({ virtuals: true }) as any;
+    if (!doc) return null;
+
+    const productRaw = doc.productId as Record<string, unknown> | null;
+    return normalizeDoc({
+      ...doc,
+      product: productRaw
+        ? {
+            id: productRaw._id?.toString?.(),
+            vendorId: productRaw.vendorId?.toString?.() ?? null,
+          }
+        : null,
+    });
+  },
+
   async markPendingFailed(orderId: string) {
     await connectToDatabase();
     return OrderModel.updateMany(

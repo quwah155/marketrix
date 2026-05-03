@@ -1,7 +1,6 @@
 import { requireAdmin } from "@/server/guards/auth.guard";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/card";
 import { formatDate, formatPrice } from "@/lib/utils";
+import { Badge, Card } from "@/components/ui/card";
 import { OrderStatus } from "@/types/db";
 import { getAdminOrdersData } from "@/services/admin-query.service";
 
@@ -29,31 +28,58 @@ export default async function AdminOrdersPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                {["Product", "Buyer", "Vendor", "Amount", "Platform Fee", "Vendor Earning", "Status", "Date"].map((h) => (
+                {[
+                  "Product",
+                  "Buyer",
+                  "Vendor",
+                  "Amount",
+                  "Platform Fee",
+                  "Vendor Earning",
+                  "Status",
+                  "Date",
+                ].map((heading) => (
                   <th
-                    key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+                    key={heading}
+                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground"
                   >
-                    {h}
+                    {heading}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-muted/40 transition-colors">
-                  <td className="px-4 py-3 text-sm font-medium">{order.product.title}</td>
+                <tr
+                  key={order.id}
+                  className="transition-colors hover:bg-muted/40"
+                >
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {order.product?.title ?? "Unknown product"}
+                  </td>
                   <td className="px-4 py-3 text-sm">
-                    {order.buyer.name ?? "Unknown"} ({order.buyer.email})
+                    {order.buyer?.name ?? "Unknown"} (
+                    {order.buyer?.email ?? "unknown@example.com"})
                   </td>
-                  <td className="px-4 py-3 text-sm">{order.product.vendor.user.name ?? "Unknown"}</td>
-                  <td className="px-4 py-3 text-sm font-semibold">{formatPrice(order.amount)}</td>
-                  <td className="px-4 py-3 text-sm">{formatPrice(order.platformFee)}</td>
-                  <td className="px-4 py-3 text-sm">{formatPrice(order.vendorEarning)}</td>
+                  <td className="px-4 py-3 text-sm">
+                    {order.product?.vendor?.user?.name ?? "Unknown"}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-semibold">
+                    {formatPrice(order.amount)}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    {formatPrice(order.platformFee)}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    {formatPrice(order.vendorEarning)}
+                  </td>
                   <td className="px-4 py-3">
-                    <Badge variant={statusVariant(order.status)}>{order.status}</Badge>
+                    <Badge variant={statusVariant(order.status)}>
+                      {order.status}
+                    </Badge>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(order.createdAt)}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                    {formatDate(order.createdAt)}
+                  </td>
                 </tr>
               ))}
             </tbody>

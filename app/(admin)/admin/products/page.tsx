@@ -1,9 +1,8 @@
 import { requireAdmin } from "@/server/guards/auth.guard";
-import { formatPrice, formatDate } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/card";
-import { ProductStatus } from "@/types/db";
+import { formatDate, formatPrice } from "@/lib/utils";
 import { AdminProductActions } from "@/components/admin/product-actions";
+import { Badge, Card } from "@/components/ui/card";
+import { ProductStatus } from "@/types/db";
 import { getAdminProductsData } from "@/services/admin-query.service";
 
 export default async function AdminProductsPage() {
@@ -11,8 +10,12 @@ export default async function AdminProductsPage() {
 
   const products = await getAdminProductsData();
 
-  const statusVariant = (s: ProductStatus) =>
-    s === ProductStatus.PUBLISHED ? "success" : s === ProductStatus.DRAFT ? "secondary" : "danger";
+  const statusVariant = (status: ProductStatus) =>
+    status === ProductStatus.PUBLISHED
+      ? "success"
+      : status === ProductStatus.DRAFT
+        ? "secondary"
+        : "danger";
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -20,31 +23,66 @@ export default async function AdminProductsPage() {
         <h1 className="text-2xl font-bold">Product Moderation</h1>
         <p className="text-muted-foreground">{products.length} total products</p>
       </div>
+
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                {["Product", "Vendor", "Price", "Status", "Orders", "Reviews", "Created", "Actions"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+                {[
+                  "Product",
+                  "Vendor",
+                  "Price",
+                  "Status",
+                  "Orders",
+                  "Reviews",
+                  "Created",
+                  "Actions",
+                ].map((heading) => (
+                  <th
+                    key={heading}
+                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
+                    {heading}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {products.map((p) => (
-                <tr key={p.id} className="hover:bg-muted/40 transition-colors">
+              {products.map((product) => (
+                <tr
+                  key={product.id}
+                  className="transition-colors hover:bg-muted/40"
+                >
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium max-w-[200px] truncate">{p.title}</p>
-                    <p className="text-xs text-muted-foreground">{p.category}</p>
+                    <p className="max-w-[200px] truncate text-sm font-medium">
+                      {product.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {product.category}
+                    </p>
                   </td>
-                  <td className="px-4 py-3 text-sm">{p.vendor.user.name}</td>
-                  <td className="px-4 py-3 text-sm font-semibold">{formatPrice(p.price)}</td>
-                  <td className="px-4 py-3"><Badge variant={statusVariant(p.status)}>{p.status}</Badge></td>
-                  <td className="px-4 py-3 text-sm">{p._count.orders}</td>
-                  <td className="px-4 py-3 text-sm">{p._count.reviews}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(p.createdAt)}</td>
+                  <td className="px-4 py-3 text-sm">
+                    {product.vendor?.user?.name ?? "Unknown vendor"}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-semibold">
+                    {formatPrice(product.price)}
+                  </td>
                   <td className="px-4 py-3">
-                    <AdminProductActions productId={p.id} currentStatus={p.status} />
+                    <Badge variant={statusVariant(product.status)}>
+                      {product.status}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3 text-sm">{product._count.orders}</td>
+                  <td className="px-4 py-3 text-sm">{product._count.reviews}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDate(product.createdAt)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <AdminProductActions
+                      productId={product.id}
+                      currentStatus={product.status}
+                    />
                   </td>
                 </tr>
               ))}

@@ -95,7 +95,14 @@ export async function deleteVendorProduct(input: {
 export async function setProductStatus(
   productId: string,
   status: ProductStatus
-): Promise<ApiResponse<null>> {
-  await productRepository.updateStatus(productId, status);
-  return { success: true, data: null };
+): Promise<ApiResponse<{ id: string; slug: string }>> {
+  const updatedProduct = await productRepository.updateStatus(productId, status);
+  if (!updatedProduct) {
+    return { success: false, error: "Product not found" };
+  }
+
+  return {
+    success: true,
+    data: { id: updatedProduct.id, slug: updatedProduct.slug },
+  };
 }

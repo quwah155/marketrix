@@ -2,7 +2,7 @@
 
 import { requireVendor, requireAdmin } from "@/server/guards/auth.guard";
 import { productSchema } from "@/lib/validations";
-import { ProductStatus, Role } from "@/types/db";
+import { ProductStatus } from "@/types/db";
 import type { ApiResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 import {
@@ -129,6 +129,8 @@ export async function suspendProduct(
   const result = await setProductStatus(productId, ProductStatus.SUSPENDED);
   if (!result.success) return result;
   revalidatePath("/admin/products");
+  revalidatePath("/products");
+  revalidatePath(`/products/${result.data.slug}`);
   revalidatePath("/");
   return { success: true, data: null, message: "Product suspended" };
 }
@@ -140,5 +142,8 @@ export async function restoreProduct(
   const result = await setProductStatus(productId, ProductStatus.PUBLISHED);
   if (!result.success) return result;
   revalidatePath("/admin/products");
+  revalidatePath("/products");
+  revalidatePath(`/products/${result.data.slug}`);
+  revalidatePath("/");
   return { success: true, data: null };
 }

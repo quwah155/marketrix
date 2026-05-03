@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/types/db";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
-
-export function AdminUserActions({ userId, currentRole }: { userId: string; currentRole: Role }) {
+export function AdminUserActions({
+  userId,
+  currentRole,
+}: {
+  userId: string;
+  currentRole: Role;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -17,8 +22,17 @@ export function AdminUserActions({ userId, currentRole }: { userId: string; curr
       const fd = new FormData();
       fd.append("userId", userId);
       fd.append("role", newRole);
-      const res = await fetch("/api/admin/users/role", { method: "POST", body: fd });
-      if (!res.ok) { toast.error("Failed to update role"); return; }
+
+      const res = await fetch("/api/admin/users/role", {
+        method: "POST",
+        body: fd,
+      });
+
+      if (!res.ok) {
+        toast.error("Failed to update role");
+        return;
+      }
+
       toast.success(`Role changed to ${newRole}`);
       router.refresh();
     } finally {
@@ -29,13 +43,34 @@ export function AdminUserActions({ userId, currentRole }: { userId: string; curr
   return (
     <div className="flex items-center gap-1.5">
       {currentRole !== Role.VENDOR && (
-        <Button variant="outline" size="sm" isLoading={loading === Role.VENDOR} onClick={() => handleRoleChange(Role.VENDOR)}>→ Vendor</Button>
+        <Button
+          variant="outline"
+          size="sm"
+          isLoading={loading === Role.VENDOR}
+          onClick={() => handleRoleChange(Role.VENDOR)}
+        >
+          Set Vendor
+        </Button>
       )}
       {currentRole !== Role.BUYER && (
-        <Button variant="secondary" size="sm" isLoading={loading === Role.BUYER} onClick={() => handleRoleChange(Role.BUYER)}>→ Buyer</Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          isLoading={loading === Role.BUYER}
+          onClick={() => handleRoleChange(Role.BUYER)}
+        >
+          Set Buyer
+        </Button>
       )}
       {currentRole !== Role.ADMIN && (
-        <Button variant="danger" size="sm" isLoading={loading === Role.ADMIN} onClick={() => handleRoleChange(Role.ADMIN)}>→ Admin</Button>
+        <Button
+          variant="danger"
+          size="sm"
+          isLoading={loading === Role.ADMIN}
+          onClick={() => handleRoleChange(Role.ADMIN)}
+        >
+          Set Admin
+        </Button>
       )}
     </div>
   );

@@ -31,6 +31,12 @@ export function Navbar() {
       : user?.role === "VENDOR"
       ? "/dashboard/vendor"
       : "/dashboard/buyer";
+  const settingsHref =
+    user?.role === "ADMIN"
+      ? "/admin/settings"
+      : user?.role === "VENDOR"
+        ? "/dashboard/vendor/settings"
+        : "/dashboard/buyer/settings";
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-border bg-[hsl(var(--background))]/85 backdrop-blur-xl">
@@ -139,7 +145,7 @@ export function Navbar() {
                           </Link>
                         )}
                         <Link
-                          href="/settings"
+                          href={settingsHref}
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted transition-colors"
                         >
