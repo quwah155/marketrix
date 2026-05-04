@@ -4,6 +4,7 @@ import { Role } from "@/types/db";
 const UserSchema = new Schema(
   {
     name: { type: String },
+    bio: { type: String },
     email: { type: String, required: true, unique: true, index: true },
     emailVerified: { type: Date },
     passwordHash: { type: String },
@@ -26,4 +27,3 @@ UserSchema.virtual("id").get(function () {
 });
 
 export const UserModel = models.User || model("User", UserSchema);
-

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { Providers } from "@/components/providers";
 import { Toaster } from "react-hot-toast";
+import { Providers } from "@/components/providers";
+import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,7 +13,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Marketrix — Premium Digital Products Marketplace",
+    default: "Marketrix - Premium Digital Products Marketplace",
     template: "%s | Marketrix",
   },
   description:
@@ -21,9 +21,7 @@ export const metadata: Metadata = {
   keywords: ["digital marketplace", "templates", "courses", "software", "saas", "marketrix"],
   authors: [{ name: "Marketrix" }],
   icons: {
-    icon: [
-      { url: "/favicon.png", type: "image/png" },
-    ],
+    icon: [{ url: "/favicon.png", type: "image/png" }],
     apple: "/favicon.png",
     shortcut: "/favicon.png",
   },
@@ -31,7 +29,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    title: "Marketrix — Premium Digital Products Marketplace",
+    title: "Marketrix - Premium Digital Products Marketplace",
     description: "Discover and purchase premium digital products from verified vendors.",
     siteName: "Marketrix",
     images: [{ url: "/favicon.png", width: 512, height: 512, alt: "Marketrix" }],
@@ -47,13 +45,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
-        {/* Inline script: stamps dark/light class before React hydrates to prevent flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme')||'dark';var r=document.documentElement;if(t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}r.classList.add(t);}catch(e){}})();`,

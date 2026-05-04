@@ -8,7 +8,7 @@ const fieldBase =
   "border-[hsl(var(--input-border))] " +
   "placeholder:text-[hsl(var(--input-placeholder))] " +
   "disabled:cursor-not-allowed disabled:opacity-50 " +
-  "transition-all duration-200";
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-all duration-200";
 
 // ================================
 // Input

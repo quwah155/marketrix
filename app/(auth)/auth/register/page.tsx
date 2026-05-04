@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "@/lib/validations";
-import { registerUser } from "@/server/actions/auth.actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Store, Mail, Lock, User } from "lucide-react";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Mail, Lock, User } from "lucide-react";
+import { registerSchema } from "@/lib/validations";
+import { registerUser } from "@/server/actions/auth.actions";
+import { BrandLogo } from "@/components/layout/brand-logo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
@@ -39,9 +40,10 @@ function RegisterContent() {
     setServerError(null);
     try {
       const formData = new FormData();
-      Object.entries({ ...data, role }).forEach(([k, v]) =>
-        formData.append(k, String(v))
-      );
+      Object.entries({ ...data, role }).forEach(([key, value]) => {
+        formData.append(key, String(value));
+      });
+
       const result = await registerUser(formData);
 
       if (!result.success) {
@@ -62,7 +64,6 @@ function RegisterContent() {
         return;
       }
 
-      setServerError(null);
       setSuccess(true);
       toast.success(result.message ?? "Account created!");
     } finally {
@@ -72,14 +73,14 @@ function RegisterContent() {
 
   if (success) {
     return (
-      <div className="text-center animate-fade-in">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950 mx-auto mb-4">
+      <div className="animate-fade-in text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950">
           <svg className="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold mb-2">Check your email!</h2>
-        <p className="text-muted-foreground mb-6">
+        <h2 className="mb-2 text-2xl font-bold">Check your email</h2>
+        <p className="mb-6 text-muted-foreground">
           We&apos;ve sent a verification link to your email address. Please verify to continue.
         </p>
         <Button onClick={() => router.push("/auth/login")} variant="secondary">
@@ -92,39 +93,31 @@ function RegisterContent() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
-            <Store className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-bold">
-            Market<span className="text-brand-500">rix</span>
-          </span>
-        </Link>
+        <BrandLogo className="mb-6" />
         <h1 className="text-2xl font-bold">Create your account</h1>
-        <p className="text-muted-foreground mt-1">Start buying or selling today</p>
+        <p className="mt-1 text-muted-foreground">Start buying or selling today</p>
       </div>
 
-      {/* Role selector — Link-based so it always works regardless of JS hydration */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-3">
         <Link
           href="/auth/register?role=BUYER"
-          className={`flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-sm font-medium transition-all ${
+          className={`flex items-center justify-center rounded-xl border-2 p-3 text-sm font-medium transition-all ${
             role === "BUYER"
-              ? "border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400"
+              ? "border-brand-500 bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400"
               : "border-border hover:border-brand-300"
           }`}
         >
-          🛒 I want to be a Buyer
+          Buyer account
         </Link>
         <Link
           href="/auth/register?role=VENDOR"
-          className={`flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-sm font-medium transition-all ${
+          className={`flex items-center justify-center rounded-xl border-2 p-3 text-sm font-medium transition-all ${
             role === "VENDOR"
-              ? "border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400"
+              ? "border-brand-500 bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400"
               : "border-border hover:border-brand-300"
           }`}
         >
-          🚀 I want to be a Vendor
+          Vendor account
         </Link>
       </div>
 
@@ -134,6 +127,7 @@ function RegisterContent() {
             {serverError}
           </div>
         ) : null}
+
         <Input
           label="Full name"
           placeholder="John Doe"
@@ -154,41 +148,45 @@ function RegisterContent() {
           type="password"
           placeholder="Min. 8 characters"
           leftIcon={<Lock className="h-4 w-4" />}
-          hint="Must contain uppercase letter and number"
+          hint="Must contain an uppercase letter and a number."
           error={errors.password?.message}
           {...register("password")}
         />
-        <Button type="submit" className="w-full mt-2" isLoading={loading}>
+        <Button type="submit" className="mt-2 w-full" isLoading={loading}>
           Create account
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground mt-6">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/auth/login" className="text-brand-500 font-medium hover:underline">
+        <Link href="/auth/login" className="font-medium text-brand-500 hover:underline">
           Sign in
         </Link>
       </p>
 
-      <p className="text-center text-xs text-muted-foreground mt-4">
+      <p className="mt-4 text-center text-xs text-muted-foreground">
         By creating an account you agree to our{" "}
-        <Link href="/terms" className="underline">Terms</Link>{" "}
+        <Link href="/terms" className="underline">
+          Terms
+        </Link>{" "}
         and{" "}
-        <Link href="/privacy" className="underline">Privacy Policy</Link>.
+        <Link href="/privacy" className="underline">
+          Privacy Policy
+        </Link>
+        .
       </p>
     </div>
   );
 }
-
 
 export default function RegisterPage() {
   return (
     <Suspense
       fallback={
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-muted rounded mx-auto" />
-          <div className="h-10 w-full bg-muted rounded" />
-          <div className="h-10 w-full bg-muted rounded" />
+          <div className="mx-auto h-8 w-48 rounded bg-muted" />
+          <div className="h-10 w-full rounded bg-muted" />
+          <div className="h-10 w-full rounded bg-muted" />
         </div>
       }
     >

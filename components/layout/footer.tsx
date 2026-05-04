@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/layout/brand-logo";
 
 const footerLinks = {
   Marketplace: [
@@ -25,57 +26,46 @@ const footerLinks = {
   ],
 };
 
+const socialLinks = [
+  { label: "X", href: "https://x.com" },
+  { label: "In", href: "https://linkedin.com" },
+  { label: "Gh", href: "https://github.com" },
+];
+
 export function Footer() {
   return (
-    <footer className="border-t border-border" style={{ background: "hsl(var(--background))" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          {/* Brand */}
+    <footer className="border-t border-border bg-[radial-gradient(circle_at_top,rgba(225,255,81,0.07),transparent_35%),hsl(var(--background))]">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-4 group">
-              <div
-                className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-200"
-                style={{
-                  background: "#00272c",
-                  borderColor: "rgba(225,255,81,0.25)",
-                }}
-              >
-                <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 18L3 8L8 14L11 10L14 14L19 8V18" stroke="#e1ff51" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="11" cy="5" r="2" fill="#e1ff51" fillOpacity="0.3" stroke="#e1ff51" strokeWidth="1.5"/>
-                </svg>
-              </div>
-              <span className="text-lg font-bold tracking-tight">
-                <span className="text-foreground">market</span>
-                <span style={{ color: "#e1ff51" }}>rix</span>
-              </span>
-            </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <BrandLogo className="mb-4" />
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Premium digital products marketplace for creators and buyers worldwide.
             </p>
-            {/* Social icons placeholder */}
-            <div className="flex items-center gap-3 mt-4">
-              {["X", "in", "gh"].map((s) => (
-                <div
-                  key={s}
-                  className="h-8 w-8 rounded-lg flex items-center justify-center text-xs font-bold text-muted-foreground border border-border hover:border-[#e1ff51]/40 hover:text-[#e1ff51] transition-colors cursor-pointer"
+            <div className="mt-4 flex items-center gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-xs font-bold text-muted-foreground transition-colors hover:border-chartreuse/40 hover:text-chartreuse"
                 >
-                  {s}
-                </div>
+                  {social.label}
+                </a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-sm font-semibold mb-4" style={{ color: "#e1ff51" }}>{category}</h3>
+              <h3 className="mb-4 text-sm font-semibold text-chartreuse">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {link.label}
                     </Link>
@@ -86,14 +76,13 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()}{" "}
-            <span style={{ color: "#e1ff51" }} className="font-semibold">Marketrix</span>.
-            All rights reserved.
+            <span className="font-semibold text-chartreuse">Marketrix</span>. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
-            Built with ❤️ using Next.js &amp; Stripe
+            Designed for trusted digital commerce with Next.js and Stripe.
           </p>
         </div>
       </div>

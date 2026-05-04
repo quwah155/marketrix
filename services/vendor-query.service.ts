@@ -288,7 +288,7 @@ export async function getVendorProductForEdit(userId: string, productId: string)
 export async function getVendorSettingsProfile(userId: string) {
   await connectToDatabase();
   const profile = await VendorProfileModel.findOne({ userId })
-    .select({ verified: 1, bio: 1, website: 1 })
+    .select({ verified: 1, bio: 1, website: 1, avatar: 1 })
     .lean({ virtuals: true }) as any;
   return normalizeDoc(profile);
 }

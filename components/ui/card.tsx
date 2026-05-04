@@ -13,7 +13,7 @@ function Card({ className, hover, glass, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm transition-colors duration-200",
+        "premium-card rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm transition-all duration-300",
         hover && "product-card cursor-pointer",
         glass && "glass-card",
         className

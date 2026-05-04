@@ -14,6 +14,7 @@ type AuthDbUser = {
   _id: Types.ObjectId;
   id?: string;
   name?: string | null;
+  bio?: string | null;
   email: string;
   image?: string | null;
   passwordHash?: string | null;
@@ -108,12 +109,15 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = (user as { role: Role }).role;
+        token.name = user.name;
+        token.picture = user.image;
       }
 
       // --- Explicit session update (e.g. role promotion) ---
       if (trigger === "update" && session) {
-        token.name = session.name;
-        token.role = session.role;
+        if (session.name !== undefined) token.name = session.name;
+        if (session.role !== undefined) token.role = session.role;
+        if (session.image !== undefined) token.picture = session.image;
       }
 
       // --- First time role is missing (e.g. OAuth sign-in) — fetch once ---
@@ -141,7 +145,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
         session.user.name = token.name as string;
-        session.user.image = token.picture as string;
+        session.user.image = (token.picture as string | null) ?? null;
       }
       return session;
     },

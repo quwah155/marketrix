@@ -4,22 +4,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
         primary:
-          "bg-brand-500 text-white shadow-brand hover:bg-brand-600 hover:shadow-brand-lg",
+          "bg-brand-500 text-white shadow-brand hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-brand-lg",
         secondary:
-          "bg-surface-secondary dark:bg-surface-dark-secondary text-foreground border border-border hover:bg-surface-tertiary dark:hover:bg-surface-dark-tertiary",
+          "border border-white/30 bg-white/55 text-foreground shadow-sm backdrop-blur-md hover:-translate-y-0.5 hover:bg-white/70 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10",
         ghost:
-          "hover:bg-surface-secondary dark:hover:bg-surface-dark-secondary text-foreground",
+          "text-foreground hover:-translate-y-0.5 hover:bg-white/40 dark:hover:bg-white/8",
         danger:
-          "bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-red-500/25",
+          "bg-red-500 text-white shadow-sm hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-red-500/25",
         outline:
-          "border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950",
+          "border border-brand-500/60 bg-brand-500/5 text-brand-500 hover:-translate-y-0.5 hover:bg-brand-50 dark:hover:bg-brand-950",
         success:
-          "bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm",
+          "bg-emerald-500 text-white shadow-sm hover:-translate-y-0.5 hover:bg-emerald-600",
         link: "text-brand-500 underline-offset-4 hover:underline p-0 h-auto",
       },
       size: {

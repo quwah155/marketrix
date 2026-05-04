@@ -32,6 +32,25 @@ export const userRepository = {
     return UserModel.findByIdAndDelete(userId);
   },
 
+  async updateProfile(
+    userId: string,
+    data: { name?: string; bio?: string; image?: string | null }
+  ) {
+    await connectToDatabase();
+    const update: Record<string, unknown> = {};
+
+    if (data.name !== undefined) update.name = data.name;
+    if (data.bio !== undefined) update.bio = data.bio;
+    if (data.image !== undefined) update.image = data.image;
+
+    const doc = await UserModel.findByIdAndUpdate(
+      userId,
+      { $set: update },
+      { new: true }
+    ).lean({ virtuals: true }) as any;
+    return normalizeDoc(doc);
+  },
+
   async updateRole(userId: string, role: Role) {
     await connectToDatabase();
     const doc = await UserModel.findByIdAndUpdate(

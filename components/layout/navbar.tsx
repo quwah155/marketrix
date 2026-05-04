@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/layout/brand-logo";
 import {
   Sun,
   Moon,
@@ -13,7 +13,6 @@ import {
   User,
   LogOut,
   LayoutDashboard,
-  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -39,24 +38,10 @@ export function Navbar() {
         : "/dashboard/buyer/settings";
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-border bg-[hsl(var(--background))]/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-40 w-full border-b border-white/20 bg-[hsl(var(--background))]/72 backdrop-blur-2xl supports-[backdrop-filter]:bg-[hsl(var(--background))]/62">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-gunmetal-900 border border-chartreuse/20 shadow-brand group-hover:border-chartreuse/50 transition-all duration-200">
-              {/* Inline SVG logo mark */}
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 18L3 8L8 14L11 10L14 14L19 8V18" stroke="#e1ff51" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="11" cy="5" r="2" fill="#e1ff51" fillOpacity="0.3" stroke="#e1ff51" strokeWidth="1.5"/>
-                <path d="M5 5H3M19 5H17" stroke="#e1ff51" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
-              </svg>
-            </div>
-            <span className="text-lg font-bold tracking-tight">
-              <span className="text-foreground">market</span>
-              <span style={{ color: "#e1ff51" }}>rix</span>
-            </span>
-          </Link>
+          <BrandLogo />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
@@ -68,7 +53,7 @@ export function Navbar() {
               <Link
                 key={label}
                 href={href}
-                className="relative px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors group"
+                className="group relative rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/40 hover:text-foreground dark:hover:bg-white/5"
               >
                 {label}
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 rounded-full transition-all duration-200 group-hover:w-4/5" style={{ background: "#e1ff51" }} />
@@ -84,7 +69,7 @@ export function Navbar() {
                 const isDark = document.documentElement.classList.contains("dark");
                 setTheme(isDark ? "light" : "dark");
               }}
-              className="h-9 w-9 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent text-muted-foreground transition-colors hover:border-white/20 hover:bg-white/40 hover:text-foreground dark:hover:bg-white/5"
               aria-label="Toggle theme"
             >
               <Sun className="h-4 w-4 hidden dark:block" />
@@ -95,7 +80,7 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen((o) => !o)}
-                  className="flex items-center gap-2 rounded-xl border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
+                  className="image-glass flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors hover:border-white/60 dark:hover:border-chartreuse/20"
                 >
                   {user.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -118,7 +103,7 @@ export function Navbar() {
                 {userMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
-                    <div className="absolute right-0 top-full mt-2 z-20 w-52 rounded-2xl border border-border bg-card shadow-glass overflow-hidden animate-slide-down">
+                    <div className="glass-card absolute right-0 top-full mt-2 z-20 w-56 overflow-hidden rounded-2xl shadow-glass animate-slide-down">
                       <div className="px-4 py-3 border-b border-border">
                         <p className="text-sm font-semibold">{user.name}</p>
                         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
@@ -127,25 +112,15 @@ export function Navbar() {
                         <Link
                           href={dashboardHref}
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted transition-colors"
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-white/50 dark:hover:bg-white/5"
                         >
                           <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
                           Dashboard
                         </Link>
-                        {user.role === "ADMIN" && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted transition-colors"
-                          >
-                            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-                            Admin Panel
-                          </Link>
-                        )}
                         <Link
                           href={settingsHref}
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted transition-colors"
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-white/50 dark:hover:bg-white/5"
                         >
                           <User className="h-4 w-4 text-muted-foreground" />
                           Settings
@@ -190,10 +165,10 @@ export function Navbar() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden py-4 border-t border-border space-y-1 animate-slide-down">
-            <Link href="/products" className="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-muted transition-colors" onClick={() => setMenuOpen(false)}>Marketplace</Link>
-            <Link href="/products?category=COURSES" className="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-muted transition-colors" onClick={() => setMenuOpen(false)}>Courses</Link>
-            <Link href="/products?category=TEMPLATES" className="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-muted transition-colors" onClick={() => setMenuOpen(false)}>Templates</Link>
+          <div className="glass-card mt-3 space-y-1 border-t border-white/20 py-4 animate-slide-down md:hidden">
+            <Link href="/products" className="block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/50 dark:hover:bg-white/5" onClick={() => setMenuOpen(false)}>Marketplace</Link>
+            <Link href="/products?category=COURSES" className="block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/50 dark:hover:bg-white/5" onClick={() => setMenuOpen(false)}>Courses</Link>
+            <Link href="/products?category=TEMPLATES" className="block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/50 dark:hover:bg-white/5" onClick={() => setMenuOpen(false)}>Templates</Link>
           </div>
         )}
       </div>

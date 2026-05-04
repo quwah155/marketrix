@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/layout/brand-logo";
 import {
   LayoutDashboard,
   Package,
@@ -21,7 +22,6 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { Store } from "lucide-react";
 
 interface NavItem {
   label: string;
@@ -80,25 +80,17 @@ export function DashboardSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-border bg-[hsl(var(--card))] transition-[width] duration-300 ease-in-out h-screen sticky top-0 overflow-hidden",
+        "glass-card sticky top-0 flex h-screen flex-col overflow-hidden border-r border-white/12 transition-[width] duration-300 ease-in-out",
         collapsed ? "w-16" : "w-64",
       )}
     >
-      {/* Brand */}
       <div
         className={cn(
           "flex h-16 items-center border-b border-border px-4",
           collapsed ? "justify-center" : "gap-3",
         )}
       >
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500 shadow-brand">
-          <Store className="h-4 w-4 text-white" />
-        </div>
-        {!collapsed && (
-          <span className="text-base font-bold truncate text-[hsl(var(--foreground))]">
-            Market<span className="text-brand-500">rix</span>
-          </span>
-        )}
+        <BrandLogo href="/" showWordmark={!collapsed} compact={collapsed} />
       </div>
 
       {/* Navigation */}
@@ -119,8 +111,8 @@ export function DashboardSidebar() {
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
                 collapsed ? "justify-center" : "",
                 isActive
-                  ? "bg-brand-500/10 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 shadow-[inset_2px_0_0_0_hsl(var(--primary))]"
-                  : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]",
+                  ? "bg-brand-500/10 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 shadow-[inset_2px_0_0_0_hsl(var(--primary)),0_10px_24px_-18px_rgba(225,255,81,0.8)]"
+                  : "text-[hsl(var(--muted-foreground))] hover:bg-white/45 hover:text-[hsl(var(--foreground))] dark:hover:bg-white/6",
               )}
             >
               <item.icon
@@ -138,7 +130,7 @@ export function DashboardSidebar() {
       {/* User info */}
       {!collapsed && session?.user && (
         <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3 rounded-xl p-2 bg-[hsl(var(--muted))]">
+          <div className="image-glass flex items-center gap-3 rounded-xl p-2">
             <div className="h-8 w-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-brand-sm">
               {session.user.name?.[0]?.toUpperCase() ?? "U"}
             </div>
@@ -157,7 +149,7 @@ export function DashboardSidebar() {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed((c) => !c)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-[hsl(var(--card))] shadow-md hover:bg-[hsl(var(--muted))] transition-colors z-10"
+        className="image-glass absolute -right-3 top-20 z-10 flex h-6 w-6 items-center justify-center rounded-full shadow-md transition-colors hover:scale-105"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed ? (
