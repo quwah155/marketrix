@@ -21,6 +21,11 @@ export const vendorProfileRepository = {
     return normalizeDoc(doc);
   },
 
+  async deleteByUserId(userId: string) {
+    await connectToDatabase();
+    return VendorProfileModel.findOneAndDelete({ userId });
+  },
+
   async upsertForUser(userId: string) {
     await connectToDatabase();
     const doc = await VendorProfileModel.findOneAndUpdate(

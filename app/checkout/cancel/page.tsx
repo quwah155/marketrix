@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Payment Cancelled — quwahmarket-saas",
+  title: "Payment Cancelled — Marketrix",
 };
 
 export default function CheckoutCancelPage() {

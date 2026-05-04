@@ -355,13 +355,13 @@ export default async function HomePage(props: PageProps) {
       {/* ══════════════════════════════════════════
           MARKETPLACE SECTION
       ══════════════════════════════════════════ */}
-      <section className="py-16" style={{ background: "#001a1f" }}>
+      <section className="marketplace-section py-16" style={{ background: "#001a1f" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10">
-            <h2 className="text-2xl font-bold text-white mb-1">
+            <h2 className="text-2xl font-bold mb-1" style={{ color: "hsl(var(--foreground))" }}>
               Featured <span className="gradient-text">Products</span>
             </h2>
-            <p className="text-white/40 text-sm">Hand-picked by our editorial team</p>
+            <p className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>Hand-picked by our editorial team</p>
           </div>
 
           {/* Search & Filters */}

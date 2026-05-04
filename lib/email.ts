@@ -1,42 +1,60 @@
 import nodemailer from "nodemailer";
 
-const FROM = process.env.EMAIL_FROM ?? "noreply@quwahmarket-saas.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-const SMTP_URL = process.env.SMTP_URL;
-const SMTP_HOST = process.env.SMTP_HOST;
-const SMTP_PORT = Number(process.env.SMTP_PORT ?? 587);
-const SMTP_SECURE = process.env.SMTP_SECURE
-  ? process.env.SMTP_SECURE === "true"
-  : SMTP_PORT === 465;
-const SMTP_USER = process.env.SMTP_USER;
-const SMTP_PASS = process.env.SMTP_PASS;
-
 let transporter: nodemailer.Transporter | null = null;
+let transporterConfigKey: string | null = null;
+
+function getMailConfig() {
+  const smtpUrl = process.env.SMTP_URL;
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = Number(process.env.SMTP_PORT ?? 587);
+  const smtpSecure = process.env.SMTP_SECURE
+    ? process.env.SMTP_SECURE === "true"
+    : smtpPort === 465;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+
+  return {
+    smtpUrl,
+    smtpHost,
+    smtpPort,
+    smtpSecure,
+    smtpUser,
+    smtpPass,
+  };
+}
 
 function getTransporter() {
-  if (transporter) {
+  const config = getMailConfig();
+  const configKey = JSON.stringify(config);
+
+  if (transporter && transporterConfigKey === configKey) {
     return transporter;
   }
 
-  if (SMTP_URL) {
-    transporter = nodemailer.createTransport(SMTP_URL);
+  if (config.smtpUrl) {
+    transporter = nodemailer.createTransport(config.smtpUrl);
+    transporterConfigKey = configKey;
     return transporter;
   }
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
+  if (!config.smtpHost || !config.smtpPort || !config.smtpUser || !config.smtpPass) {
+    transporter = null;
+    transporterConfigKey = null;
     return null;
   }
 
   transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: SMTP_SECURE,
+    host: config.smtpHost,
+    port: config.smtpPort,
+    secure: config.smtpSecure,
     auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
+      user: config.smtpUser,
+      pass: config.smtpPass,
     },
   });
+  transporterConfigKey = configKey;
 
   return transporter;
 }
@@ -64,12 +82,25 @@ async function sendEmail({
     return;
   }
 
-  await mailer.sendMail({
-    from: FROM,
-    to: email,
-    subject,
-    html,
-  });
+  try {
+    await mailer.sendMail({
+      from: process.env.EMAIL_FROM ?? "noreply@marketrix.com",
+      to: email,
+      subject,
+      html,
+    });
+  } catch (error) {
+    console.error("[Email] sendMail failed", {
+      to: email,
+      from: process.env.EMAIL_FROM ?? "noreply@marketrix.com",
+      subject,
+      smtpHost: process.env.SMTP_HOST ?? null,
+      smtpPort: process.env.SMTP_PORT ?? null,
+      smtpSecure: process.env.SMTP_SECURE ?? null,
+      error,
+    });
+    throw error;
+  }
 }
 
 export async function sendVerificationEmail(email: string, token: string) {

@@ -96,7 +96,7 @@ export function DashboardSidebar() {
         </div>
         {!collapsed && (
           <span className="text-base font-bold truncate text-[hsl(var(--foreground))]">
-            quwahmarket<span className="text-brand-500">-saas</span>
+            Market<span className="text-brand-500">rix</span>
           </span>
         )}
       </div>

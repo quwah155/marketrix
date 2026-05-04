@@ -17,7 +17,8 @@ export async function registerAccount(input: {
   password: string;
   role: "BUYER" | "VENDOR";
 }): Promise<ApiResponse<{ email: string }>> {
-  const existing = await userRepository.findByEmail(input.email);
+  const email = input.email.toLowerCase();
+  const existing = await userRepository.findByEmail(email);
   if (existing) {
     return { success: false, error: "An account with this email already exists" };
   }
@@ -25,7 +26,7 @@ export async function registerAccount(input: {
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
   const user = await userRepository.create({
     name: input.name,
-    email: input.email,
+    email,
     passwordHash,
     role: input.role as Role,
   });
@@ -45,14 +46,25 @@ export async function registerAccount(input: {
   });
 
   try {
-    await sendVerificationEmail(input.email, token);
-  } catch {
-    console.error("[Email] Failed to send verification email to:", input.email);
+    await sendVerificationEmail(email, token);
+  } catch (error) {
+    await verificationTokenRepository.deleteEmailVerificationByUser(user.id);
+    if (input.role === "VENDOR") {
+      await vendorProfileRepository.deleteByUserId(user.id);
+    }
+    await userRepository.deleteById(user.id);
+
+    console.error("[Email] Failed to send verification email to:", email, error);
+    return {
+      success: false,
+      error:
+        "We couldn't send your verification email, so the account was not created. Please check your email settings and try again.",
+    };
   }
 
   return {
     success: true,
-    data: { email: input.email },
+    data: { email },
     message: "Account created! Please check your email to verify your account.",
   };
 }

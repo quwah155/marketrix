@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 import { getMarketplaceProducts } from "@/services/marketplace.service";
 
 export const metadata: Metadata = {
-  title: "Marketplace — quwahmarket-saas",
+  title: "Marketplace — Marketrix",
   description: "Browse thousands of premium digital products: templates, courses, software, and more.",
 };
 

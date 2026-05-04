@@ -58,7 +58,7 @@ function LoginContent() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
             <Store className="h-5 w-5 text-white" />
           </div>
-          <span className="text-xl font-bold">quwahmarket<span className="text-brand-500">-saas</span></span>
+          <span className="text-xl font-bold">Market<span className="text-brand-500">rix</span></span>
         </Link>
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-muted-foreground mt-1">Sign in to your account</p>

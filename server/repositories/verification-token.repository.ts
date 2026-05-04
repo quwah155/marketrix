@@ -32,6 +32,14 @@ export const verificationTokenRepository = {
     return AppVerificationTokenModel.findByIdAndDelete(id);
   },
 
+  async deleteEmailVerificationByUser(userId: string) {
+    await connectToDatabase();
+    return AppVerificationTokenModel.deleteMany({
+      userId,
+      type: "EMAIL_VERIFICATION",
+    });
+  },
+
   async deletePasswordResetByUser(userId: string) {
     await connectToDatabase();
     return AppVerificationTokenModel.deleteMany({

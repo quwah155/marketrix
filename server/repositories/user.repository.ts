@@ -27,6 +27,11 @@ export const userRepository = {
     return normalizeDoc(doc.toObject());
   },
 
+  async deleteById(userId: string) {
+    await connectToDatabase();
+    return UserModel.findByIdAndDelete(userId);
+  },
+
   async updateRole(userId: string, role: Role) {
     await connectToDatabase();
     const doc = await UserModel.findByIdAndUpdate(
