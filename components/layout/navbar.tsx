@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/layout/brand-logo";
 import {
-  Sun,
-  Moon,
   Menu,
   X,
   User,
@@ -19,7 +16,6 @@ import { useState } from "react";
 
 export function Navbar() {
   const { data: session } = useSession();
-  const { setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -66,19 +62,6 @@ export function Navbar() {
 
           {/* Right actions */}
           <div className="flex items-center gap-2">
-            {/* Theme toggle — always visible */}
-            <button
-              onClick={() => {
-                const isDark = document.documentElement.classList.contains("dark");
-                setTheme(isDark ? "light" : "dark");
-              }}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent text-muted-foreground transition-colors hover:border-white/20 hover:bg-white/40 hover:text-foreground dark:hover:bg-white/5"
-              aria-label="Toggle theme"
-            >
-              <Sun className="h-4 w-4 hidden dark:block" />
-              <Moon className="h-4 w-4 block dark:hidden" />
-            </button>
-
             {/* Desktop auth actions — hidden on mobile */}
             {user ? (
               <div className="relative hidden md:block">

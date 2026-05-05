@@ -49,14 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme')||'dark';var r=document.documentElement;if(t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}r.classList.add(t);}catch(e){}})();`,
-          }}
-        />
-      </head>
+    <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
           {children}

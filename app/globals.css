@@ -4,45 +4,9 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────
-   MARKETRIX — LIGHT MODE TOKENS
+   MARKETRIX — DARK MODE TOKENS (only mode)
 ───────────────────────────────────────────── */
 :root {
-  --background: 186 30% 96%;
-  --foreground: 192 80% 6%;         /* near-black for max contrast */
-  --card: 0 0% 100%;
-  --card-foreground: 192 80% 6%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 192 80% 6%;
-  --primary: 72 100% 40%;           /* darker chartreuse for light bg readability */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 186 25% 90%;
-  --secondary-foreground: 192 80% 10%;
-  --muted: 186 20% 88%;
-  --muted-foreground: 192 30% 32%;  /* was too light — now clearly readable */
-  --accent: 186 20% 90%;
-  --accent-foreground: 192 80% 8%;
-  --destructive: 0 84% 55%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 186 20% 76%;            /* stronger border visibility */
-  --input: 186 20% 76%;
-  --ring: 72 100% 36%;
-  --radius: 0.75rem;
-
-  --input-bg: 0 0% 100%;
-  --input-text: 192 80% 6%;
-  --input-placeholder: 192 20% 42%;
-  --input-border: 186 20% 70%;
-  --input-border-focus: 72 100% 40%;
-
-  /* Brand raw */
-  --chartreuse: #e1ff51;
-  --gunmetal: #00272c;
-}
-
-/* ─────────────────────────────────────────────
-   MARKETRIX — DARK MODE TOKENS
-───────────────────────────────────────────── */
-.dark {
   --background: 186 100% 8%;      /* #00272c gun-metal */
   --foreground: 0 0% 96%;
   --card: 186 100% 10%;
@@ -62,12 +26,19 @@
   --border: 186 40% 18%;
   --input: 186 40% 18%;
   --ring: 72 100% 64%;
+  --radius: 0.75rem;
 
   --input-bg: 186 100% 10%;
   --input-text: 0 0% 96%;
   --input-placeholder: 186 18% 50%;
   --input-border: 186 40% 20%;
   --input-border-focus: 72 100% 64%;
+
+  /* Brand raw */
+  --chartreuse: #e1ff51;
+  --gunmetal: #00272c;
+
+  color-scheme: dark;
 }
 
 /* ─────────────────────────────────────────────
@@ -82,8 +53,6 @@ html {
   scroll-behavior: smooth;
   color-scheme: dark;
 }
-.light { color-scheme: light; }
-.dark  { color-scheme: dark;  }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -364,11 +333,6 @@ select:focus-visible {
 .dashboard-surface {
   min-height: 100%;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 22%);
-}
-
-.dark .dashboard-surface {
-  background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%);
 }
 
@@ -452,29 +416,7 @@ select:focus-visible {
   transform: translateY(-2px);
 }
 
-/* ─────────────────────────────────────────────
-   LIGHT MODE OVERRIDES — ensure app shell is readable
-───────────────────────────────────────────── */
-.light body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
 
-/* Marketplace section background in light mode */
-.light .marketplace-section {
-  background-color: hsl(var(--background));
-}
-
-/* Strong muted text in light mode */
-.light .text-muted-foreground {
-  color: hsl(192 30% 32%) !important;
-}
-
-/* Ensure card text is dark in light mode */
-.light .bg-card {
-  background-color: #ffffff;
-  color: #061012;
-}
 
 .stat-badge {
   background: rgba(225, 255, 81, 0.08);
