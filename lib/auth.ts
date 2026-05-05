@@ -10,6 +10,8 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { UserModel } from "@/server/models";
 import { vendorProfileRepository } from "@/server/repositories/vendor-profile.repository";
 
+
+
 type AuthDbUser = {
   _id: Types.ObjectId;
   id?: string;
@@ -22,6 +24,8 @@ type AuthDbUser = {
   role?: Role | null;
 };
 
+
+
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise) as NextAuthOptions["adapter"],
   session: {
@@ -30,12 +34,12 @@ export const authOptions: NextAuthOptions = {
     updateAge: 60 * 60, // rolling: refresh token every hour of active use
   },
   // Let NextAuth handle cookie names automatically.
-  // On HTTPS (Vercel), it auto-prefixes with __Secure- which mobile browsers require.
-  // Hardcoding the name breaks mobile auth.
+ 
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
   },
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
