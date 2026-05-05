@@ -26,7 +26,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             A sharper marketplace for{" "}
             <span className="gradient-text">premium digital products</span>
           </h2>
-          <p className="text-lg leading-relaxed text-blue-200/80">
+          <p className="text-lg leading-relaxed text-white/60">
             Marketrix helps creators sell polished digital products and helps buyers discover tools worth trusting.
           </p>
 
@@ -41,13 +41,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm"
               >
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="mt-0.5 text-sm text-blue-300/80">{stat.label}</p>
+                <p className="mt-0.5 text-sm text-white/50">{stat.label}</p>
               </div>
             ))}
           </div>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 text-left backdrop-blur-sm">
-            <p className="text-sm italic leading-relaxed text-blue-100/80">
+            <p className="text-sm italic leading-relaxed text-white/70">
               &ldquo;The quality bar feels higher here. I can find polished assets fast and trust the vendor behind them.&rdquo;
             </p>
             <div className="mt-3 flex items-center gap-2">
@@ -56,7 +56,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               </div>
               <div>
                 <p className="text-xs font-medium text-white">Amina Cole</p>
-                <p className="text-xs text-blue-300/70">Product designer and buyer</p>
+                <p className="text-xs text-white/50">Product designer and buyer</p>
               </div>
             </div>
           </div>

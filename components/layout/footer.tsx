@@ -49,7 +49,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-xs font-bold text-muted-foreground transition-colors hover:border-chartreuse/40 hover:text-chartreuse"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-xs font-bold text-muted-foreground transition-all duration-200 hover:border-chartreuse/40 hover:bg-chartreuse/10 hover:text-chartreuse"
                 >
                   {social.label}
                 </a>
@@ -82,7 +82,7 @@ export function Footer() {
             <span className="font-semibold text-chartreuse">Marketrix</span>. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
-            Designed for trusted digital commerce with Next.js and Stripe.
+            Built for trusted digital commerce.
           </p>
         </div>
       </div>

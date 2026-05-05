@@ -152,11 +152,6 @@ select:focus-visible {
   box-shadow: 0 16px 40px -6px rgba(225, 255, 81, 0.18);
   border-color: rgba(225, 255, 81, 0.35);
 }
-/* Light mode: use a teal-toned shadow instead */
-.light .product-card:hover {
-  box-shadow: 0 16px 40px -6px rgba(0, 39, 44, 0.14);
-  border-color: rgba(0, 39, 44, 0.25);
-}
 
 /* ─────────────────────────────────────────────
    GRADIENT TEXT — CHARTREUSE
@@ -169,33 +164,9 @@ select:focus-visible {
 }
 
 /* ─────────────────────────────────────────────
-   GLASS CARD
+   GLASS CARD (dark-only)
 ───────────────────────────────────────────── */
 .glass-card {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.36)),
-    rgba(0, 39, 44, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  box-shadow:
-    0 20px 45px -28px rgba(0, 39, 44, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.58),
-    inset 0 -1px 0 rgba(0, 39, 44, 0.08);
-  backdrop-filter: blur(18px) saturate(155%);
-  -webkit-backdrop-filter: blur(18px) saturate(155%);
-}
-
-.premium-card {
-  box-shadow:
-    0 16px 40px -34px rgba(0, 39, 44, 0.34),
-    0 1px 0 rgba(255, 255, 255, 0.24) inset;
-}
-
-.dark .premium-card {
-  box-shadow:
-    0 18px 44px -30px rgba(0, 0, 0, 0.72),
-    0 1px 0 rgba(255, 255, 255, 0.05) inset;
-}
-.dark .glass-card {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
     rgba(0, 39, 44, 0.58);
@@ -204,22 +175,17 @@ select:focus-visible {
     0 20px 45px -28px rgba(0, 0, 0, 0.82),
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(225, 255, 81, 0.06);
-}
-
-.image-glass {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.24)),
-    rgba(0, 39, 44, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow:
-    0 20px 45px -28px rgba(0, 39, 44, 0.62),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(0, 39, 44, 0.12);
   backdrop-filter: blur(18px) saturate(155%);
   -webkit-backdrop-filter: blur(18px) saturate(155%);
 }
 
-.dark .image-glass {
+.premium-card {
+  box-shadow:
+    0 18px 44px -30px rgba(0, 0, 0, 0.72),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+.image-glass {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
     rgba(0, 39, 44, 0.46);
@@ -228,15 +194,14 @@ select:focus-visible {
     0 20px 45px -28px rgba(0, 0, 0, 0.88),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     inset 0 -1px 0 rgba(225, 255, 81, 0.05);
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
 }
 
 /* ─────────────────────────────────────────────
    GLOW EFFECTS — CHARTREUSE
 ───────────────────────────────────────────── */
 .glow-brand {
-  box-shadow: 0 0 24px 0 rgba(225, 255, 81, 0.3);
-}
-.dark .glow-brand {
   box-shadow: 0 0 32px 0 rgba(225, 255, 81, 0.45);
 }
 
@@ -248,6 +213,7 @@ select:focus-visible {
   color: hsl(var(--input-text));
   border: 1.5px solid hsl(var(--input-border));
   border-radius: var(--radius);
+  box-shadow: inset 0 1.5px 4px rgba(0,0,0,0.4);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
 }
 .input-field:hover:not(:disabled) {
@@ -255,14 +221,8 @@ select:focus-visible {
 }
 .input-field:focus {
   border-color: #e1ff51;
-  box-shadow: 0 0 0 3px rgba(225, 255, 81, 0.15);
-  outline: none;
-}
-.dark .input-field {
-  box-shadow: inset 0 1.5px 4px rgba(0,0,0,0.4);
-}
-.dark .input-field:focus {
   box-shadow: inset 0 1.5px 4px rgba(0,0,0,0.4), 0 0 0 3px rgba(225,255,81,0.2);
+  outline: none;
 }
 
 /* ─────────────────────────────────────────────
@@ -357,16 +317,6 @@ select:focus-visible {
   pointer-events: none;
 }
 
-/* ─── Landing sections are always dark-themed ─── */
-.landing-dark {
-  background: #00272c;
-  color: #fff;
-}
-.landing-dark-alt {
-  background: #001a1f;
-  color: #fff;
-}
-
 .tech-card {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
@@ -416,8 +366,6 @@ select:focus-visible {
   transform: translateY(-2px);
 }
 
-
-
 .stat-badge {
   background: rgba(225, 255, 81, 0.08);
   border: 1px solid rgba(225, 255, 81, 0.2);
@@ -428,7 +376,3 @@ select:focus-visible {
   background: linear-gradient(90deg, #e1ff51, transparent);
   height: 1px;
 }
-
-/* Chartreuse scrollbar */
-::-webkit-scrollbar-thumb { background: rgba(225,255,81,0.25); }
-::-webkit-scrollbar-thumb:hover { background: rgba(225,255,81,0.45); }

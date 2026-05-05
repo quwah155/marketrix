@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.vendor.user.name}
             </span>
             {product.vendor.verified ? (
-              <span className="ml-auto text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="ml-auto text-xs font-medium text-emerald-400">
                 Verified
               </span>
             ) : null}

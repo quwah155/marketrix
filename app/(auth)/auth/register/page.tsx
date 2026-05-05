@@ -74,7 +74,7 @@ function RegisterContent() {
   if (success) {
     return (
       <div className="animate-fade-in text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950">
           <svg className="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -93,7 +93,9 @@ function RegisterContent() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
-        <BrandLogo className="mb-6" />
+        <div className="flex justify-center mb-6">
+          <BrandLogo />
+        </div>
         <h1 className="text-2xl font-bold">Create your account</h1>
         <p className="mt-1 text-muted-foreground">Start buying or selling today</p>
       </div>
@@ -103,8 +105,8 @@ function RegisterContent() {
           href="/auth/register?role=BUYER"
           className={`flex items-center justify-center rounded-xl border-2 p-3 text-sm font-medium transition-all ${
             role === "BUYER"
-              ? "border-brand-500 bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400"
-              : "border-border hover:border-brand-300"
+              ? "border-chartreuse bg-chartreuse/10 text-chartreuse"
+              : "border-border hover:border-chartreuse/40"
           }`}
         >
           Buyer account
@@ -113,8 +115,8 @@ function RegisterContent() {
           href="/auth/register?role=VENDOR"
           className={`flex items-center justify-center rounded-xl border-2 p-3 text-sm font-medium transition-all ${
             role === "VENDOR"
-              ? "border-brand-500 bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400"
-              : "border-border hover:border-brand-300"
+              ? "border-chartreuse bg-chartreuse/10 text-chartreuse"
+              : "border-border hover:border-chartreuse/40"
           }`}
         >
           Vendor account
@@ -123,7 +125,7 @@ function RegisterContent() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {serverError ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
+          <div className="rounded-xl border border-red-900/60 bg-red-950/40 px-4 py-3 text-sm text-red-300">
             {serverError}
           </div>
         ) : null}
@@ -159,7 +161,7 @@ function RegisterContent() {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/auth/login" className="font-medium text-brand-500 hover:underline">
+        <Link href="/auth/login" className="font-medium text-chartreuse hover:underline">
           Sign in
         </Link>
       </p>

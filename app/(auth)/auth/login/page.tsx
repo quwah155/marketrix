@@ -60,7 +60,9 @@ function LoginContent() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
-        <BrandLogo className="mb-6" />
+        <div className="flex justify-center mb-6">
+          <BrandLogo />
+        </div>
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="mt-1 text-muted-foreground">Sign in to your account</p>
       </div>
@@ -109,7 +111,7 @@ function LoginContent() {
           {...register("password")}
         />
         <div className="flex justify-end">
-          <Link href="/auth/forgot-password" className="text-xs text-brand-500 hover:underline">
+          <Link href="/auth/forgot-password" className="text-xs text-chartreuse hover:underline">
             Forgot password?
           </Link>
         </div>
@@ -120,7 +122,7 @@ function LoginContent() {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/auth/register" className="font-medium text-brand-500 hover:underline">
+        <Link href="/auth/register" className="font-medium text-chartreuse hover:underline">
           Sign up
         </Link>
       </p>

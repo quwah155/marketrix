@@ -62,7 +62,9 @@ export default function ForgotPasswordPage() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
-        <BrandLogo className="mb-6" />
+        <div className="flex justify-center mb-6">
+          <BrandLogo />
+        </div>
         <h1 className="text-2xl font-bold">Forgot your password?</h1>
         <p className="mt-1 text-muted-foreground">
           Enter your email and we&apos;ll send you a reset link.
@@ -71,7 +73,7 @@ export default function ForgotPasswordPage() {
 
       {submitted ? (
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-950 text-emerald-400">
             <Mail className="h-8 w-8" />
           </div>
           <div>
@@ -90,7 +92,7 @@ export default function ForgotPasswordPage() {
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {serverMessage ? (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
+              <div className="rounded-xl border border-red-900/60 bg-red-950/40 px-4 py-3 text-sm text-red-300">
                 {serverMessage}
               </div>
             ) : null}
@@ -112,7 +114,7 @@ export default function ForgotPasswordPage() {
           <div className="mt-6 text-center">
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-2 text-sm text-brand-500 hover:underline"
+              className="inline-flex items-center gap-2 text-sm text-chartreuse hover:underline"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to sign in
