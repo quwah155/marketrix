@@ -14,15 +14,15 @@ const footerLinks = {
     { label: "Pricing", href: "/pricing" },
   ],
   Company: [
-    { label: "About", href: "/about" },
-    { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
+    { label: "About", href: "/about#about" },
+    { label: "Blog", href: "/about#blog" },
+    { label: "Careers", href: "/about#careers" },
+    { label: "Contact", href: "/about#contact" },
   ],
   Legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
+    { label: "Privacy Policy", href: "/legal#privacy" },
+    { label: "Terms of Service", href: "/legal#terms" },
+    { label: "Cookie Policy", href: "/legal#cookies" },
   ],
 };
 
