@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/guards/auth.guard";
+import { requireBuyer } from "@/server/guards/auth.guard";
 import { userRepository } from "@/server/repositories/user.repository";
 import { AccountSettingsForm } from "@/components/settings/account-settings-form";
 import { PasswordSettingsForm } from "@/components/settings/password-settings-form";
@@ -6,7 +6,7 @@ import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui
 import { Mail, ShieldCheck } from "lucide-react";
 
 export default async function BuyerSettingsPage() {
-  const user = await requireAuth();
+  const user = await requireBuyer();
   const profile = await userRepository.findById(user.id);
 
   return (

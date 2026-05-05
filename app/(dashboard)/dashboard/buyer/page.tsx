@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/guards/auth.guard";
+import { requireBuyer } from "@/server/guards/auth.guard";
 import { formatPrice } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import Link from "next/link";
 import { getBuyerDashboardData } from "@/services/buyer-query.service";
 
 export default async function BuyerDashboardPage() {
-  const user = await requireAuth();
+  const user = await requireBuyer();
 
   const { totalOrders, pendingOrders, totalSpent, unreadMessages, recentOrders } =
     await getBuyerDashboardData(user.id);

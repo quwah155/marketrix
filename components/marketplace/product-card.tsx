@@ -13,6 +13,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const avgRating = calculateAverageRating(product.reviews?.map((review) => review.rating) ?? []);
   const reviewCount = product._count?.reviews ?? 0;
   const orderCount = product._count?.orders ?? 0;
+  const vendorImage = product.vendor.avatar ?? product.vendor.user.image;
 
   return (
     <Link href={`/products/${product.slug}`} className="group">
@@ -45,7 +46,17 @@ export function ProductCard({ product }: ProductCardProps) {
               className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
               style={{ background: "#00272c", color: "#e1ff51" }}
             >
-              {product.vendor.user.name?.[0]?.toUpperCase() ?? "V"}
+              {vendorImage ? (
+                <Image
+                  src={vendorImage}
+                  alt={product.vendor.user.name ?? "Vendor"}
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 rounded-full object-cover"
+                />
+              ) : (
+                product.vendor.user.name?.[0]?.toUpperCase() ?? "V"
+              )}
             </div>
             <span className="truncate text-xs font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>
               {product.vendor.user.name}

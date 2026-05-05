@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/guards/auth.guard";
+import { requireBuyer } from "@/server/guards/auth.guard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Package } from "lucide-react";
@@ -7,7 +7,7 @@ import Image from "next/image";
 import { getBuyerDownloadsData } from "@/services/buyer-query.service";
 
 export default async function BuyerDownloadsPage() {
-  const user = await requireAuth();
+  const user = await requireBuyer();
   const { downloadableProducts } = await getBuyerDownloadsData(user.id);
 
   return (

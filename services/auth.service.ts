@@ -122,8 +122,14 @@ export async function sendPasswordReset(
 
   try {
     await sendPasswordResetEmail(normalized, token);
-  } catch {
-    console.error("[Email] Failed to send reset email to:", normalized);
+  } catch (error) {
+    await verificationTokenRepository.deletePasswordResetByUser(user.id);
+    console.error("[Email] Failed to send reset email to:", normalized, error);
+    return {
+      success: false,
+      error:
+        "We couldn't send the password reset email. Please check the SMTP credentials and try again.",
+    };
   }
 
   return {

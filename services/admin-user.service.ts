@@ -2,6 +2,8 @@ import { Role } from "@/types/db";
 import type { ApiResponse } from "@/types";
 import { userRepository } from "@/server/repositories/user.repository";
 import { vendorProfileRepository } from "@/server/repositories/vendor-profile.repository";
+import { connectToDatabase } from "@/lib/mongoose";
+import { ProductModel } from "@/server/models";
 
 export async function updateUserRoleByAdmin(input: {
   actorId: string;
@@ -10,6 +12,22 @@ export async function updateUserRoleByAdmin(input: {
 }): Promise<ApiResponse<null>> {
   if (input.userId === input.actorId) {
     return { success: false, error: "Cannot change your own role" };
+  }
+
+  if (input.role !== Role.VENDOR) {
+    const vendorProfile = await vendorProfileRepository.findByUserId(input.userId);
+    if (vendorProfile?.id) {
+      await connectToDatabase();
+      const productCount = await ProductModel.countDocuments({
+        vendorId: vendorProfile.id,
+      });
+      if (productCount > 0) {
+        return {
+          success: false,
+          error: "Cannot remove vendor role while this user still has products.",
+        };
+      }
+    }
   }
 
   await userRepository.updateRole(input.userId, input.role);

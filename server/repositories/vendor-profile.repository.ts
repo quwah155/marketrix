@@ -31,7 +31,7 @@ export const vendorProfileRepository = {
     const doc = await VendorProfileModel.findOneAndUpdate(
       { userId },
       { $setOnInsert: { userId } },
-      { upsert: true, new: true }
+      { upsert: true, new: true, setDefaultsOnInsert: true }
     ).lean({ virtuals: true }) as any;
     return normalizeDoc(doc);
   },

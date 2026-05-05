@@ -6,6 +6,8 @@ import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 
+
+
 const ERROR_MESSAGES: Record<string, { title: string; description: string }> = {
   OAuthSignin: {
     title: "OAuth Sign-In Error",

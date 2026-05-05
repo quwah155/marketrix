@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/guards/auth.guard";
+import { requireBuyer } from "@/server/guards/auth.guard";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessagingUI } from "@/components/messaging/messaging-ui";
 import { getOrCreateThread } from "@/server/actions/buyer.actions";
@@ -10,7 +10,7 @@ interface Props { searchParams: Promise<{ vendor?: string; thread?: string }> }
 
 export default async function BuyerMessagesPage(props: Props) {
   const searchParams = await props.searchParams;
-  const user = await requireAuth();
+  const user = await requireBuyer();
 
   // If coming from product page with vendor param, get/create thread
   let activeThreadId = searchParams.thread;

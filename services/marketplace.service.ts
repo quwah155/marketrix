@@ -22,8 +22,15 @@ type AggregatedProduct = {
   ordersCount?: number;
   reviewsCount?: number;
   reviews?: Array<{ rating: number }>;
-  vendor?: { _id: unknown; verified?: boolean; userId?: unknown };
-  vendorUser?: { _id: unknown; name?: string | null; image?: string | null };
+  vendor?: {
+    _id: unknown;
+    verified?: boolean;
+    userId?: unknown;
+    bio?: string | null;
+    website?: string | null;
+    avatar?: string | null;
+  };
+  vendorUser?: { _id: unknown; name?: string | null; image?: string | null; role?: string | null };
 };
 
 function mapAggregatedProduct(product: AggregatedProduct) {
@@ -38,6 +45,9 @@ function mapAggregatedProduct(product: AggregatedProduct) {
   const vendor = product.vendor
     ? {
         id: product.vendor._id?.toString(),
+        bio: product.vendor.bio ?? null,
+        website: product.vendor.website ?? null,
+        avatar: product.vendor.avatar ?? null,
         user: vendorUser,
         verified: product.vendor.verified ?? false,
       }
@@ -150,6 +160,7 @@ export async function getMarketplaceProducts(searchParams: RawSearchParams) {
         },
       },
       { $unwind: "$vendorUser" },
+      { $match: { "vendorUser.role": "VENDOR" } },
       { $sort: sortSpec },
       { $skip: (params.page - 1) * params.limit },
       { $limit: params.limit },
@@ -170,8 +181,8 @@ export async function getMarketplaceProducts(searchParams: RawSearchParams) {
           ordersCount: 1,
           reviewsCount: 1,
           reviews: { rating: 1 },
-          vendor: { _id: 1, verified: 1, userId: 1 },
-          vendorUser: { _id: 1, name: 1, image: 1 },
+          vendor: { _id: 1, verified: 1, userId: 1, bio: 1, website: 1, avatar: 1 },
+          vendorUser: { _id: 1, name: 1, image: 1, role: 1 },
         },
       },
     ] as any[]),

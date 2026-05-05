@@ -31,6 +31,9 @@ export interface ProductWithVendor {
   vendorId: string;
   vendor: {
     id: string;
+    bio?: string | null;
+    website?: string | null;
+    avatar?: string | null;
     user: {
       id: string;
       name: string | null;

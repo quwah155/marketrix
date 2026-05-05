@@ -1,4 +1,4 @@
-import { requireAuth } from "@/server/guards/auth.guard";
+import { requireBuyer } from "@/server/guards/auth.guard";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/card";
@@ -16,7 +16,7 @@ const statusVariant = (s: OrderStatus) => {
 };
 
 export default async function BuyerOrdersPage() {
-  const user = await requireAuth();
+  const user = await requireBuyer();
 
   const orders = await getBuyerOrdersData(user.id);
 

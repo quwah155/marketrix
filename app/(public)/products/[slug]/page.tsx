@@ -67,9 +67,10 @@ export default async function ProductDetailPage(props: Props) {
 
   if (!product) notFound();
 
-  const productDetail = product as ProductDetail;
+  const productDetail = product as unknown as ProductDetail;
   const vendor = productDetail.vendor;
   const vendorUser = vendor?.user ?? null;
+  const vendorImage = vendor?.avatar ?? vendorUser?.image ?? null;
 
   incrementProductViews(productDetail.id).catch(() => {});
 
@@ -229,7 +230,17 @@ export default async function ProductDetailPage(props: Props) {
               <h3 className="mb-3 text-sm font-semibold">About the Vendor</h3>
               <div className="mb-3 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 font-bold text-white">
-                  {vendorUser?.name?.[0]?.toUpperCase() ?? "V"}
+                  {vendorImage ? (
+                    <Image
+                      src={vendorImage}
+                      alt={vendorUser?.name ?? "Vendor"}
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    vendorUser?.name?.[0]?.toUpperCase() ?? "V"
+                  )}
                 </div>
                 <div>
                   <p className="text-sm font-medium">{vendorUser?.name ?? "Vendor"}</p>
@@ -240,7 +251,20 @@ export default async function ProductDetailPage(props: Props) {
                   )}
                 </div>
               </div>
-              {session?.user && vendorUser && session.user.id !== vendorUser.id && (
+              {vendor?.bio && (
+                <p className="mb-3 text-sm text-muted-foreground">{vendor.bio}</p>
+              )}
+              {vendor?.website && (
+                <a
+                  href={vendor.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mb-3 block text-sm font-medium text-brand-500 hover:underline"
+                >
+                  Visit website
+                </a>
+              )}
+              {session?.user?.role === "BUYER" && vendorUser && session.user.id !== vendorUser.id && (
                 <Link href={`/dashboard/buyer/messages?vendor=${vendorUser.id}`}>
                   <Button variant="secondary" size="sm" className="w-full">
                     <MessageSquare className="h-4 w-4" />
