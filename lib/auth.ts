@@ -26,20 +26,12 @@ export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise) as NextAuthOptions["adapter"],
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60,  // 1 day absolute expiry
-    updateAge: 60 * 60,    // rolling: refresh token every hour of active use
+    maxAge: 24 * 60 * 60, // 1 day absolute expiry
+    updateAge: 60 * 60, // rolling: refresh token every hour of active use
   },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax" as const,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
+  // Let NextAuth handle cookie names automatically.
+  // On HTTPS (Vercel), it auto-prefixes with __Secure- which mobile browsers require.
+  // Hardcoding the name breaks mobile auth.
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
