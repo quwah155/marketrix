@@ -1,6 +1,6 @@
 # quwahmarket-saas
 
-Production-grade multi-vendor SaaS marketplace built with Next.js App Router, TypeScript, MongoDB (Mongoose), NextAuth, Stripe, and Pusher.
+Production-grade multi-vendor SaaS marketplace built with Next.js App Router, TypeScript, MongoDB (Mongoose), NextAuth, Stripe, Cloudinary, UploadThing, and Pusher.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -38,7 +38,7 @@ The codebase is structured for long-term maintainability with clear boundaries b
 - data access repositories
 
 ## Tech Stack
-- Next.js 14 (App Router)
+- Next.js 16 (App Router)
 - TypeScript (strict mode)
 - Tailwind CSS
 - MongoDB + Mongoose
@@ -47,6 +47,7 @@ The codebase is structured for long-term maintainability with clear boundaries b
 - Zod validation
 - TanStack Query
 - UploadThing
+- Cloudinary
 - Pusher (real-time)
 - Redis (optional, for rate limiting/caching)
 
@@ -113,6 +114,7 @@ components/
 
 lib/
   auth.ts
+  cloudinary.ts
   mongodb.ts
   mongoose.ts
   email.ts
@@ -149,7 +151,7 @@ scripts/
   seed.ts
 
 types/
-middleware.ts
+proxy.ts
 ```
 
 ## Environment Variables
@@ -189,15 +191,21 @@ Use `.env.local` for local dev. Start from `.env.example`.
 - `NEXT_PUBLIC_PUSHER_KEY`
 - `NEXT_PUBLIC_PUSHER_CLUSTER`
 
+### Cloudinary
+- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+- `NEXT_PUBLIC_CLOUDINARY_PRODUCT_IMAGES_UPLOAD_PRESET`
+- `NEXT_PUBLIC_CLOUDINARY_PRODUCT_IMAGES_FOLDER` (optional; defaults to `marketrix/products`)
+
 ### UploadThing
-- `UPLOADTHING_SECRET`
-- `UPLOADTHING_APP_ID`
+- `UPLOADTHING_TOKEN`
 
 ### Optional Redis
 - `REDIS_URL`
 
 Notes:
 - If `REDIS_URL` is missing or invalid, the app degrades safely and skips Redis-backed rate limiting/caching.
+- Product thumbnail uploads use a public unsigned Cloudinary upload preset. Keep the preset restricted to images, set an appropriate max file size, and use the folder setting above for organization.
+- UploadThing is still used for authenticated product file uploads and avatar uploads.
 - Do not commit real secrets.
 
 ## Local Development
@@ -266,9 +274,18 @@ There are no migration files. Schema changes are managed via model updates and o
 - Messages persisted first, then event broadcast (best effort)
 
 ## File Uploads
+- Product thumbnail images upload directly to Cloudinary from the vendor product form
+- Cloudinary client helper: `lib/cloudinary.ts`
+- Allowed thumbnail inputs in the form: PNG, JPG, WebP, GIF, AVIF up to 8MB
 - UploadThing routes under `app/api/uploadthing`
-- Vendor-only uploads for product files/thumbnails
+- Vendor-only uploads for downloadable product files
 - Authenticated user uploads for avatars
+
+### Cloudinary setup
+1. Create an unsigned upload preset in Cloudinary.
+2. Restrict the preset to image uploads and keep the max file size aligned with the app limit.
+3. Set `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_CLOUDINARY_PRODUCT_IMAGES_UPLOAD_PRESET`.
+4. Optionally set `NEXT_PUBLIC_CLOUDINARY_PRODUCT_IMAGES_FOLDER`; otherwise thumbnails go to `marketrix/products`.
 
 ## Security Model
 - CSRF same-origin enforcement on sensitive API routes
